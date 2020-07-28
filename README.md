@@ -98,15 +98,15 @@ JAVA 오늘 배운것(TIL)
      >System.out.println(x < y? x: y); // min function
        
        7.비트 연산자                          
-      >System.out.printf("b%32s\n", Integer.toBinaryString(7)); b                             111
-      >System.out.printf("b%32s\n", Integer.toBinaryString(7 >> 1)); b                              11
+      >System.out.printf("b%32s\n", Integer.toBinaryString(7)); b                             111</br>
+      >System.out.printf("b%32s\n", Integer.toBinaryString(7 >> 1)); b                              11</br>
       
-      >System.out.printf("b%32s\n", Integer.toBinaryString(-1));
-      >System.out.printf("b%32s\n", Integer.toBinaryString(-1 >> 1));
-      >System.out.printf("b%32s\n", Integer.toBinaryString(-1 >>> 1));
+      >System.out.printf("b%32s\n", Integer.toBinaryString(-1));</br>
+      >System.out.printf("b%32s\n", Integer.toBinaryString(-1 >> 1));</br>
+      >System.out.printf("b%32s\n", Integer.toBinaryString(-1 >>> 1));</br>
       >//앞에 0으로 시작 sing비트와 무관하게 0으로 채운다.
-      >System.out.printf("b%32s\n", Integer.toBinaryString(1252 & 15234));
-      >System.out.printf("b%32s\n", Integer.toBinaryString(1252 | 15234));
-      >System.out.printf("b%32s\n", Integer.toBinaryString(1252 ^ 15234));
+      >System.out.printf("b%32s\n", Integer.toBinaryString(1252 & 15234));</br>
+      >System.out.printf("b%32s\n", Integer.toBinaryString(1252 | 15234));</br>
+      >System.out.printf("b%32s\n", Integer.toBinaryString(1252 ^ 15234));</br>
 
              

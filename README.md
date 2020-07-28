@@ -9,7 +9,7 @@ JAVA 오늘 배운것(TIL)
 - ch02_s02
   - 자료형, 자료형의 종류(기본형(Primitive Type), 참조형(Reference Type))
   - 기본형 자료형 : 정수형, 실수형, 문자형, 논리형
-    -정수형 : Byte(1Byte), Short(2Byte), Int(4Byte), Long(8Byte)
+        -정수형 : Byte(1Byte), Short(2Byte), Int(4Byte), Long(8Byte)
 - ch02_s03
   - 입출력 메소드
      -입력 : Scanner를 사용해서 키보드로 값 입력시킬 수 있다.

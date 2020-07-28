@@ -113,4 +113,9 @@ JAVA 오늘 배운것(TIL)
       System.out.printf("b%32s\n", Integer.toBinaryString(1252 & 15234));
       System.out.printf("b%32s\n", Integer.toBinaryString(1252 | 15234));
       System.out.printf("b%32s\n", Integer.toBinaryString(1252 ^ 15234));
+    * 과일
+	* 사과
+    * 배
+    - 바나나
+    	- 노란색
              

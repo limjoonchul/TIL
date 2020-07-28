@@ -32,7 +32,7 @@ JAVA 오늘 배운것(TIL)
                    - System.out.printf("%5.2f.\n",1.425); //소수점 포함 자릿수를 만든다.
 * ch02_s04
    * 연산자(operator), 피연산자(operand) -> 연산식(Expression : 현업에서 많이 쓰이는 용어)</br>
-         - 사칙 연산자</br>
+         1. 사칙 연산자</br>
              -z = x + y 일 때, 1.+ : 연산자,  x y: 피연산자, x+y : 연산식 / 2. = : 연산자, z: 피연산자, x+y: 피연산자
          - 정수형 사칙 연산
             - System.out.println(150 / 8); // 정수 나누기 -> 몫
@@ -59,39 +59,39 @@ JAVA 오늘 배운것(TIL)
            //infinity 수식은 문제 없지만 값에서 문제가 생길경우 발생 연산 도중에 한번 infinity가 발생하면 최종적으로 NaN이뜸
            System.out.println(40 % 0.0); //NaN = not a number
         
-          - 대입 연산자
+        2.대입 연산자
              - z +=10, z-=10, 논리 연산자, 비트 연산자 등등 다 된다.</br>
       
-         - 비교 연산자
+        3.비교 연산자
              - System.out.println(10 > 20);
                System.out.println(10 < 20);
                int x = 10,y = 10;
                System.out.println(x == y);
                System.out.println(x != y);
        
-   - 논리 연산자 : 입출력이 모두 boolean
-     -a AND b : a,b 모두 참일때만 참
-      a OR b : a,b 둘중 하나만 참이어도 참
-      a XOR b : a 또는 b 둘중 하나만 참이어야 참 //exclusive or, 배타적 OR
-      NOT a : a가 참이면 거짓, 거짓이면 참 -> 단항연산자
-     -System.out.println(10 < 20 & 40 >= 30); // AND
-      System.out.println(40 < 2 | 1 >0); // OR
-      System.out.println(!true);
-      System.out.println(!(10>20)); // NOT
-      System.out.println(10 > 2 ^ 5 < 2); // XOR true
+        4.논리 연산자 : 입출력이 모두 boolean
+           -a AND b : a,b 모두 참일때만 참
+           a OR b : a,b 둘중 하나만 참이어도 참
+           a XOR b : a 또는 b 둘중 하나만 참이어야 참 //exclusive or, 배타적 OR
+           NOT a : a가 참이면 거짓, 거짓이면 참 -> 단항연산자
+           -System.out.println(10 < 20 & 40 >= 30); // AND
+            System.out.println(40 < 2 | 1 >0); // OR
+            System.out.println(!true);
+            System.out.println(!(10>20)); // NOT
+            System.out.println(10 > 2 ^ 5 < 2); // XOR true
       
-   - 증감 연산자 = 단항 연산자
-     -int val = 0;
-      System.out.println(val++); // val = 0으로 먼저 Expression 평가 후에 val += 1 적용
-       // sout(val); // val +=1;
-      System.out.println(++val); // val += 1 먼저 계산한 후에 Expreesion 평가
-       // val +=1; //sout(val);
-      System.out.println(val--);
-       // sout(val); // val -=1;
-      System.out.println(--val);
-       // val -=1; // sout(val);
+        5.증감 연산자 = 단항 연산자
+            -int val = 0;
+             System.out.println(val++); // val = 0으로 먼저 Expression 평가 후에 val += 1 적용
+             // sout(val); // val +=1;
+             System.out.println(++val); // val += 1 먼저 계산한 후에 Expreesion 평가
+             // val +=1; //sout(val);
+             System.out.println(val--);
+            // sout(val); // val -=1;
+            System.out.println(--val);
+            // val -=1; // sout(val);
        
-   - 삼항 연산자
+        6.삼항 연산자
      -(condition)? (true Expression):(false Expression)
        boolean             값                 값
        System.out.println(true? 1 :0);

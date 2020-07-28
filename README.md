@@ -9,7 +9,7 @@ JAVA 오늘 배운것(TIL)
 - ch02_s02
   - 자료형, 자료형의 종류(기본형(Primitive Type), 참조형(Reference Type))
   - 기본형 자료형 : 정수형, 실수형, 문자형, 논리형
-    - 정수형 : Byte(1Byte), Short(2Byte), Int(4Byte), Long(8Byte)
+    -정수형 : Byte(1Byte), Short(2Byte), Int(4Byte), Long(8Byte)
 - ch02_s03
   - 입출력 메소드
     -입력 : Scanner를 사용해서 키보드로 값 입력시킬 수 있다.
@@ -21,7 +21,7 @@ JAVA 오늘 배운것(TIL)
        -print() :   System.out.print("123121\r\n"); r = 캐리지 리턴  첫 글자 자리로 보냄, n = newline을 의미
        -println() : System.out.println(1523.22); ln = new line은 줄 바꿈을 의미한다.
        -printf() :  System.out.printf("%s is for string\n","string"); new line이 자동으로 안붙여짐
-                    System.out.printf("%f\n",14.23f); //꼭 float은 아니다 f가 flaot이 아니라
+                 - System.out.printf("%f\n",14.23f); //꼭 float은 아니다 f가 flaot이 아니라
                     floating number float과 double 둘다 나타내야기 때문에
                  - 정수 포맷팅
                    -  System.out.printf("%5d.\n", 10); //5d 5자리 확보 ...10

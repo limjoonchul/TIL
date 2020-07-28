@@ -60,32 +60,32 @@ JAVA 오늘 배운것(TIL)
            >>System.out.println(40 % 0.0); //NaN = not a number
         
         2.대입 연산자
-             >z +=10, z-=10, 논리 연산자, 비트 연산자 등등 다 된다.</br>
+        >z +=10, z-=10, 논리 연산자, 비트 연산자 등등 다 된다.</br>
       
         3.비교 연산자
-             >System.out.println(10 > 20);
-             >System.out.println(10 < 20);
-             >int x = 10,y = 10;
-             >System.out.println(x == y);
-             >ystem.out.println(x != y);
+        >System.out.println(10 > 20);
+        >System.out.println(10 < 20);
+        >int x = 10,y = 10;
+        >System.out.println(x == y);
+        >ystem.out.println(x != y);
        
         4.논리 연산자 : 입출력이 모두 boolean
-           >a AND b : a,b 모두 참일때만 참
-           >a OR b : a,b 둘중 하나만 참이어도 참
-           >a XOR b : a 또는 b 둘중 하나만 참이어야 참 //exclusive or, 배타적 OR
-           >NOT a : a가 참이면 거짓, 거짓이면 참 -> 단항연산자
-           >System.out.println(10 < 20 & 40 >= 30); // AND
-           >System.out.println(40 < 2 | 1 >0); // OR
-           >System.out.println(!true);
-           >System.out.println(!(10>20)); // NOT
-           >System.out.println(10 > 2 ^ 5 < 2); // XOR true
+        >a AND b : a,b 모두 참일때만 참
+        >a OR b : a,b 둘중 하나만 참이어도 참
+        >a XOR b : a 또는 b 둘중 하나만 참이어야 참 //exclusive or, 배타적 OR
+        >NOT a : a가 참이면 거짓, 거짓이면 참 -> 단항연산자
+        >System.out.println(10 < 20 & 40 >= 30); // AND
+        >System.out.println(40 < 2 | 1 >0); // OR
+        >System.out.println(!true);
+        >System.out.println(!(10>20)); // NOT
+        >System.out.println(10 > 2 ^ 5 < 2); // XOR true
       
         5.증감 연산자 = 단항 연산자
-            >int val = 0;
-             >System.out.println(val++); // val = 0으로 먼저 Expression 평가 후에 val += 1 적용
-             >>// sout(val); // val +=1;
-             >System.out.println(++val); // val += 1 먼저 계산한 후에 Expreesion 평가
-             >>// val +=1; //sout(val);
+        >int val = 0;
+        >System.out.println(val++); // val = 0으로 먼저 Expression 평가 후에 val += 1 적용
+        >>// sout(val); // val +=1;
+        >System.out.println(++val); // val += 1 먼저 계산한 후에 Expreesion 평가
+        >>// val +=1; //sout(val);
        
         6.삼항 연산자
      >(condition)? (true Expression):(false Expression)

@@ -98,10 +98,8 @@ JAVA 오늘 배운것(TIL)
      >System.out.println(x < y? x: y); // min function
        
        7.비트 연산자                          
-      >System.out.printf("b%32s\n", Integer.toBinaryString(7));      
-      >>// b                             111
-      >System.out.printf("b%32s\n", Integer.toBinaryString(7 >> 1)); 
-      >>// b                              11
+      >System.out.printf("b%32s\n", Integer.toBinaryString(7)); // b                             111
+      >System.out.printf("b%32s\n", Integer.toBinaryString(7 >> 1)); // b                              11
       
       >System.out.printf("b%32s\n", Integer.toBinaryString(-1));
       >System.out.printf("b%32s\n", Integer.toBinaryString(-1 >> 1));

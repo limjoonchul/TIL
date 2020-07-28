@@ -15,18 +15,18 @@ JAVA 오늘 배운것(TIL)
   * 입출력 메소드</br>
    - 입력 : Scanner를 사용해서 키보드로 값 입력시킬 수 있다.</br>
          - .next() : 입력받을 내용이 있을 때까지 기다린다. Blocking 메소드라고도 함.
-                  공백으로 문자열 구분
-         - .nextLine() : 한줄 전체를 받음, \n(enter)로 구분됨. 
+                  공백으로 문자열 구분</br>
+         - .nextLine() : 한줄 전체를 받음, \n(enter)로 구분됨. </br>
          - .nextInt() : 정수형을 입력받음, 공백으로 구분되는 정수.
     - 출력 : print(), println(), printf()</br>
-        -print() :   System.out.print("123121\r\n"); r = 캐리지 리턴  첫 글자 자리로 보냄, n = newline을 의미
-        -println() : System.out.println(1523.22); ln = new line은 줄 바꿈을 의미한다.
-        -printf() :  System.out.printf("%s is for string\n","string"); new line이 자동으로 안붙여짐
+        -print() :   System.out.print("123121\r\n"); r = 캐리지 리턴  첫 글자 자리로 보냄, n = newline을 의미</br>
+        -println() : System.out.println(1523.22); ln = new line은 줄 바꿈을 의미한다.</br>
+        -printf() :  System.out.printf("%s is for string\n","string"); new line이 자동으로 안붙여짐</br>
                  - System.out.printf("%f\n",14.23f); //꼭 float은 아니다 f가 flaot이 아니라
-                    floating number float과 double 둘다 나타내야기 때문에
+                    floating number float과 double 둘다 나타내야기 때문에</br>
                  - 정수 포맷팅
                    -  System.out.printf("%5d.\n", 10); //5d 5자리 확보 ...10
-                   - System.out.printf("%3d\n",104294); //자릿수가 더크면 그대로 출력이된다  3칸은 최소한 확보하는 것
+                   - System.out.printf("%3d\n",104294); //자릿수가 더크면 그대로 출력이된다  3칸은 최소한 확보하는 것</br>
                  - 실수 포맷팅
                    - System.out.printf("%5.4f\n", 152523.456228); //소수점 아래에 4자리까지만 출력 5는 최소한 5칸 확보 소숫점도 한칸 차지한다.
                    - System.out.printf("%5.2f.\n",1.425); //소수점 포함 자릿수를 만든다.

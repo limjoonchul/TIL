@@ -92,27 +92,25 @@ JAVA 오늘 배운것(TIL)
             // val -=1; // sout(val);
        
         6.삼항 연산자
-     -(condition)? (true Expression):(false Expression)
-       boolean             값                 값
-       System.out.println(true? 1 :0);
-       System.out.println(false? 1:0);
+     >(condition)? (true Expression):(false Expression)
+     >boolean             값                 값
+     >System.out.println(true? 1 :0);
+     >System.out.println(false? 1:0);
 
-       x = 10; y = 13;
-       System.out.println(x > y? x: y); // max function
-       System.out.println(x < y? x: y); // min function
+     >x = 10; y = 13;
+     >System.out.println(x > y? x: y); // max function
+     >System.out.println(x < y? x: y); // min function
        
-   - 비트 연산자
-     -System.out.printf("b%32s\n", Integer.toBinaryString(8));       
-      System.out.printf("b%32s\n", Integer.toBinaryString(8 >> 1)); //shift 연산자 b                             
-      System.out.printf("b%32s\n", Integer.toBinaryString(7));      // b                             111
-      System.out.printf("b%32s\n", Integer.toBinaryString(7 >> 1)); // b                              11
+       7.비트 연산자                          
+      >System.out.printf("b%32s\n", Integer.toBinaryString(7));      // b                             111
+      >System.out.printf("b%32s\n", Integer.toBinaryString(7 >> 1)); // b                              11
       
-      System.out.printf("b%32s\n", Integer.toBinaryString(-1));
-      System.out.printf("b%32s\n", Integer.toBinaryString(-1 >> 1));
-      System.out.printf("b%32s\n", Integer.toBinaryString(-1 >>> 1));
-      //앞에 0으로 시작 sing비트와 무관하게 0으로 채운다.
-      System.out.printf("b%32s\n", Integer.toBinaryString(1252 & 15234));
-      System.out.printf("b%32s\n", Integer.toBinaryString(1252 | 15234));
-      System.out.printf("b%32s\n", Integer.toBinaryString(1252 ^ 15234));
+      >System.out.printf("b%32s\n", Integer.toBinaryString(-1));
+      >System.out.printf("b%32s\n", Integer.toBinaryString(-1 >> 1));
+      >System.out.printf("b%32s\n", Integer.toBinaryString(-1 >>> 1));
+      >//앞에 0으로 시작 sing비트와 무관하게 0으로 채운다.
+      >System.out.printf("b%32s\n", Integer.toBinaryString(1252 & 15234));
+      >System.out.printf("b%32s\n", Integer.toBinaryString(1252 | 15234));
+      >System.out.printf("b%32s\n", Integer.toBinaryString(1252 ^ 15234));
 
              

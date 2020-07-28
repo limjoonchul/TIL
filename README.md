@@ -13,14 +13,14 @@ JAVA 오늘 배운것(TIL)
 - ch02_s03
   - 입출력 메소드
      -입력 : Scanner를 사용해서 키보드로 값 입력시킬 수 있다.
-       -.next() : 입력받을 내용이 있을 때까지 기다린다. Blocking 메소드라고도 함.
+        -.next() : 입력받을 내용이 있을 때까지 기다린다. Blocking 메소드라고도 함.
                   공백으로 문자열 구분
-       -.nextLine() : 한줄 전체를 받음, \n(enter)로 구분됨. 
-       -.nextInt() : 정수형을 입력받음, 공백으로 구분되는 정수.
+        -.nextLine() : 한줄 전체를 받음, \n(enter)로 구분됨. 
+        -.nextInt() : 정수형을 입력받음, 공백으로 구분되는 정수.
      -출력 : print(), println(), printf()
-       -print() :   System.out.print("123121\r\n"); r = 캐리지 리턴  첫 글자 자리로 보냄, n = newline을 의미
-       -println() : System.out.println(1523.22); ln = new line은 줄 바꿈을 의미한다.
-       -printf() :  System.out.printf("%s is for string\n","string"); new line이 자동으로 안붙여짐
+        -print() :   System.out.print("123121\r\n"); r = 캐리지 리턴  첫 글자 자리로 보냄, n = newline을 의미
+        -println() : System.out.println(1523.22); ln = new line은 줄 바꿈을 의미한다.
+        -printf() :  System.out.printf("%s is for string\n","string"); new line이 자동으로 안붙여짐
                  - System.out.printf("%f\n",14.23f); //꼭 float은 아니다 f가 flaot이 아니라
                     floating number float과 double 둘다 나타내야기 때문에
                  - 정수 포맷팅

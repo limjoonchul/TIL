@@ -46,9 +46,9 @@ JAVA 오늘 배운것(TIL)
         >>System.out.println(Integer.MAX_VALUE /2 * 3); // -1073741827 오버플로우
         >>System.out.println(Integer.MAX_VALUE); //2147483647
         >>System.out.println(Integer.MAX_VALUE + 1); //-2147483648 
-        >>가장 작은 값이됨 가장 큰 값에서 overflow 발생 시 가장 작은 값이 됨</br>
-        >int maxVal = 0b01111111111111111111111111111; //b다음에 0이면 양수 1이면 음수 32비트
-        >int maxVal1 =0b10000000000000000000000000001; //2의 보수
+        >>가장 작은 값이됨 가장 큰 값에서 overflow 발생 시 가장 작은 값이 됨
+        >int maxVal = 0b01111111111111111111111111111; //b다음에 0이면 양수 1이면 음수 32비트</br>
+        >int maxVal1 =0b10000000000000000000000000001; //2의 보수</br>
         >int minVal2 = 0b10000000000000000000000000000; //1의보수</br>
         >중요!
         >>System.out.println((6-5.9) * 10); // 0.9999999999999964

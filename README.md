@@ -31,8 +31,8 @@ JAVA 오늘 배운것(TIL)
                    - System.out.printf("%5.4f\n", 152523.456228); //소수점 아래에 4자리까지만 출력 5는 최소한 5칸 확보 소숫점도 한칸 차지한다.
                    - System.out.printf("%5.2f.\n",1.425); //소수점 포함 자릿수를 만든다.
 - ch02_s04
-  -연산자(operator), 피연산자(operand) -> 연산식(Expression : 현업에서 많이 쓰이는 용어)</br>
-    -사칙 연산자</br>
+   -연산자(operator), 피연산자(operand) -> 연산식(Expression : 현업에서 많이 쓰이는 용어)</br>
+       -사칙 연산자</br>
        -z = x + y 일 때, 1.+ : 연산자,  x y: 피연산자, x+y : 연산식 / 2. = : 연산자, z: 피연산자, x+y: 피연산자
        -정수형 사칙 연산
         - System.out.println(150 / 8); // 정수 나누기 -> 몫

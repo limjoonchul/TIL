@@ -12,7 +12,7 @@ JAVA 오늘 배운것(TIL)
         -정수형 : Byte(1Byte), Short(2Byte), Int(4Byte), Long(8Byte)
 - ch02_s03
   - 입출력 메소드
-     -입력 : Scanner를 사용해서 키보드로 값 입력시킬 수 있다.
+        - 입력 : Scanner를 사용해서 키보드로 값 입력시킬 수 있다.
          - .next() : 입력받을 내용이 있을 때까지 기다린다. Blocking 메소드라고도 함.
                   공백으로 문자열 구분
          - .nextLine() : 한줄 전체를 받음, \n(enter)로 구분됨. 

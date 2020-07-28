@@ -24,10 +24,10 @@ JAVA 오늘 배운것(TIL)
         -printf() :  System.out.printf("%s is for string\n","string"); new line이 자동으로 안붙여짐</br>
                  - System.out.printf("%f\n",14.23f); //꼭 float은 아니다 f가 flaot이 아니라
                     floating number float과 double 둘다 나타내야기 때문에</br>
-                 - 정수 포맷팅
+                 - 정수 포맷팅</br>
                    -  System.out.printf("%5d.\n", 10); //5d 5자리 확보 ...10
                    - System.out.printf("%3d\n",104294); //자릿수가 더크면 그대로 출력이된다  3칸은 최소한 확보하는 것</br>
-                 - 실수 포맷팅
+                 - 실수 포맷팅</br>
                    - System.out.printf("%5.4f\n", 152523.456228); //소수점 아래에 4자리까지만 출력 5는 최소한 5칸 확보 소숫점도 한칸 차지한다.
                    - System.out.printf("%5.2f.\n",1.425); //소수점 포함 자릿수를 만든다.
 - ch02_s04

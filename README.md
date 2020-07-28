@@ -34,8 +34,8 @@ JAVA 오늘 배운것(TIL)
    * 연산자(operator), 피연산자(operand) -> 연산식(Expression : 현업에서 많이 쓰이는 용어)</br>
          1. 사칙 연산자</br>
              -z = x + y 일 때, 1.+ : 연산자,  x y: 피연산자, x+y : 연산식 / 2. = : 연산자, z: 피연산자, x+y: 피연산자
-         - 정수형 사칙 연산
-            - System.out.println(150 / 8); // 정수 나누기 -> 몫
+             - 정수형 사칙 연산
+             - System.out.println(150 / 8); // 정수 나누기 -> 몫
               System.out.println(150 % 8); //modulus연산  나머지 값이 나옴</br>
          -실수형 사칙 연산</br>
              - System.out.println(10.5f + 12.3); //float, double 같이 연산되면 double로 변환 후 연산

@@ -31,25 +31,25 @@ JAVA 오늘 배운것(TIL)
                    - System.out.printf("%5.4f\n", 152523.456228); //소수점 아래에 4자리까지만 출력 5는 최소한 5칸 확보 소숫점도 한칸 차지한다.
                    - System.out.printf("%5.2f.\n",1.425); //소수점 포함 자릿수를 만든다.
 - ch02_s04
-  - 연산자(operator), 피연산자(operand) -> 연산식(Expression : 현업에서 많이 쓰이는 용어)
-    -사칙 연산자
+ - 연산자(operator), 피연산자(operand) -> 연산식(Expression : 현업에서 많이 쓰이는 용어)</br>
+    -사칙 연산자</br>
        -z = x + y 일 때, 1.+ : 연산자,  x y: 피연산자, x+y : 연산식 / 2. = : 연산자, z: 피연산자, x+y: 피연산자
        -정수형 사칙 연산
         - System.out.println(150 / 8); // 정수 나누기 -> 몫
-          System.out.println(150 % 8); //modulus연산  나머지 값이 나옴
-       -실수형 사칙 연산
+          System.out.println(150 % 8); //modulus연산  나머지 값이 나옴</br>
+       -실수형 사칙 연산</br>
         - System.out.println(10.5f + 12.3); //float, double 같이 연산되면 double로 변환 후 연산
           System.out.println(10.4-50); // 실수형, 정수형을 같이 연산하면 실수형으로 변환 후 연산
           System.out.println(5.2 / 1.2);// 몫이 아니고 실수 값으로 계산 됨
-          System.out.println(5.2 % 1.2); // 실수 나눗셈도 modulus 연산으로 나머지 계산 가능 연산 이루어짐
-       -사칙연산의 주의사항
+          System.out.println(5.2 % 1.2); // 실수 나눗셈도 modulus 연산으로 나머지 계산 가능 연산 이루어짐</br>
+       -사칙연산의 주의사항</br>
         - System.out.println(Integer.MAX_VALUE /2 * 3); // -1073741827 오버플로우
           System.out.println(Integer.MAX_VALUE); //2147483647
           System.out.println(Integer.MAX_VALUE + 1); //-2147483648 
-          가장 작은 값이됨 가장 큰 값에서 overflow 발생 시 가장 작은 값이 됨
+          가장 작은 값이됨 가장 큰 값에서 overflow 발생 시 가장 작은 값이 됨</br>
        -int maxVal = 0b01111111111111111111111111111; //b다음에 0이면 양수 1이면 음수 32비트
         int maxVal1 =0b10000000000000000000000000001; //2의 보수
-        int minVal2 = 0b10000000000000000000000000000; //1의보수
+        int minVal2 = 0b10000000000000000000000000000; //1의보수</br>
        -중요!
         System.out.println((6-5.9) * 10); // 0.9999999999999964
         System.out.println(Math.floor((6-5.9) * 10)); // 0.0 
@@ -60,7 +60,7 @@ JAVA 오늘 배운것(TIL)
         System.out.println(40 % 0.0); //NaN = not a number
         
    - 대입 연산자
-      -z +=10, z-=10, 논리 연산자, 비트 연산자 등등 다 된다.
+      -z +=10, z-=10, 논리 연산자, 비트 연산자 등등 다 된다.</br>
       
    - 비교 연산자
       -System.out.println(10 > 20);

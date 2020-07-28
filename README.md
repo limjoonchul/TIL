@@ -1,7 +1,7 @@
 # java-TIL
 JAVA 오늘 배운것(TIL)
 
-# 자바 첫날
+# 자바 첫날(2020-07-28)
 - java_first
   - Hello World 출력
 - ch02_s01
@@ -9,7 +9,8 @@ JAVA 오늘 배운것(TIL)
 - ch02_s02
   - 자료형, 자료형의 종류(기본형(Primitive Type), 참조형(Reference Type))
   - 기본형 자료형 : 정수형, 실수형, 문자형, 논리형</br>
-        -정수형 : Byte(1Byte), Short(2Byte), Int(4Byte), Long(8Byte)
+        - 정수형 : Byte(1Byte), Short(2Byte), Int(4Byte), Long(8Byte)
+# 자바 두번째 날(2020-07-28)
 * ch02_s03
   * 입출력 메소드
   * 입력 : Scanner를 사용해서 키보드로 값 입력시킬 수 있다.
@@ -113,9 +114,5 @@ JAVA 오늘 배운것(TIL)
       System.out.printf("b%32s\n", Integer.toBinaryString(1252 & 15234));
       System.out.printf("b%32s\n", Integer.toBinaryString(1252 | 15234));
       System.out.printf("b%32s\n", Integer.toBinaryString(1252 ^ 15234));
-    * 과일
-	* 사과
-    * 배
-    - 바나나
-    	- 노란색
+
              

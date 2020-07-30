@@ -108,5 +108,12 @@ JAVA 오늘 배운것(TIL)
       >System.out.printf("b%32s\n", Integer.toBinaryString(1252 & 15234));</br>
       >System.out.printf("b%32s\n", Integer.toBinaryString(1252 | 15234));</br>
       >System.out.printf("b%32s\n", Integer.toBinaryString(1252 ^ 15234));</br>
-
+# 자바 3번째 (2020-07-30)
+* ch02_s05
+   * 조건문 (if문, switch~case문)
+* ch02_s06
+   * 반복문 (for문, while문, do while문)
+   * label : 레이블 가장 가까운 반복문을 건너 뛰는게 아니라 레이블이 적혀 있는 반복문을 제어
+* Practice
+   * 반복문과 조건문을 이용하여 369게임, 별찍기 연습
              

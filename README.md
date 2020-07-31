@@ -1,7 +1,7 @@
 # java-TIL
 JAVA 오늘 배운것(TIL)
 
-# 자바 첫날(2020-07-28)
+# 자바 1주- 1번째(2020-07-28)
 - java_first
   - Hello World 출력
 - ch02_s01
@@ -10,7 +10,7 @@ JAVA 오늘 배운것(TIL)
   - 자료형, 자료형의 종류(기본형(Primitive Type), 참조형(Reference Type))
   - 기본형 자료형 : 정수형, 실수형, 문자형, 논리형</br>
         - 정수형 : Byte(1Byte), Short(2Byte), Int(4Byte), Long(8Byte)
-# 자바 두번째 날(2020-07-28)
+# 자바 1주- 2번째(2020-07-29)
 * ch02_s03
   * 입출력 메소드</br>
    - 입력 : Scanner를 사용해서 키보드로 값 입력시킬 수 있다.</br>
@@ -108,7 +108,7 @@ JAVA 오늘 배운것(TIL)
       >System.out.printf("b%32s\n", Integer.toBinaryString(1252 & 15234));</br>
       >System.out.printf("b%32s\n", Integer.toBinaryString(1252 | 15234));</br>
       >System.out.printf("b%32s\n", Integer.toBinaryString(1252 ^ 15234));</br>
-# 자바 3번째 (2020-07-30)
+# 자바 1주- 3번째 (2020-07-30)
 * ch02_s05
    * 조건문 (if문, switch~case문)
 * ch02_s06
@@ -116,4 +116,79 @@ JAVA 오늘 배운것(TIL)
    * label : 레이블 가장 가까운 반복문을 건너 뛰는게 아니라 레이블이 적혀 있는 반복문을 제어
 * Practice
    * 반복문과 조건문을 이용하여 369게임, 별찍기 연습
-             
+   
+# 자바 1주- 4번째 (2020-07-31)
+* ch02_s07
+   * 배열
+    ````
+  * 특성
+   - 하나의 변수로 여러 개의 값을 다룰 수 있다.
+   - 동일 자료 형만 다룰 수 있다,
+   - 한번 생성한 배열의 크기는 변하지 않는다.
+   - 배열에 속한 값은 메모리에 연속으로 위치한다.**
+  
+  ````
+  * 선언 및 생성과 초기화
+  ````
+  배열의 선언: int [] integers;(메모리를 잡고 있지 않은 상태)
+  
+  배열의 생성: int [] integers2 = new int[10];
+  
+  초기화 : 
+  integers2[0] = 5; (값을 넣어주지 않으면 0으로 자동으로 초기화 된다.)
+  int [] integers3 = new int[]{5,2,6,3,12,4}; // 길이를 입력하지 않아도 된다.
+  int [] integers4 = {1,4,5,23,0}; //new int를 빼도 초기화 가능.
+ 
+  for문을 이용한 초기화:
+  float [] floats = new float[5];
+  for (int i =0; i<floats.length; i++){
+       floats[i] = (float)(i * 0.25);
+  }
+  
+  Enhancded for, for each문(향상된 포문):
+  
+  for(float floatVal: floats){ // 배열의 길이만큼 알아서 포문을 돌면서 하나씩 값을 받아옴. 0~ 길이까지
+           System.out.println(floatVal);
+  }
+  ````
+  * ch02_s09
+    * N-D Array
+    ````
+    * 배열이 배열을 담고 있으면 다차원 배열이라 하는데 이거싱 N-DArray이다.
+    수학에서 말하는 점 -> 선 -> 면 -> 공간 -> 4차원 -> 5차원
+    
+    ````
+    * 다차원 배열의 선언
+  
+    ````
+    int [][] ints;
+    int [] halfCStyle[]; //hybrid 안좋음
+    int oldCStlye[][]; // lod... 안좋음
+    
+    int [][] ints1 = new int[10][10]; // 앞에 있는 숫자가 더 큰 차원의 수 길이가 5인 인테저어레이를 담고 있는 10인 인테저어레이
+    
+    int [][] ints2 = new int[10][];
+    for (int i =0; i< ints2.length; i++){
+         ints2[i] = new int[5];
+    }
+    
+    int [][] ints4 = {{1,2,3},{4,5,6}}; // [2][3]
+    int [][] ints5 = {{1,3,2},{1,2},{4,5,3}}; //[3][] 두개짜리는 실제 길이가 더 짧은 것 비어있는게 아니다.
+    ````
+    * for 문을 이용한 출력
+    ````
+    for (int i=0; i<ints5.length; i++){ //과제에 이용하면 역순 가능.
+        System.out.printf("[%d]", ints5[i].length);
+        for (int j=0; j<ints5[i].length; j++){
+            System.out.printf("%d ",ints5[i][j]);
+        }
+        System.out.println("");
+    }
+    
+    for (int [] array : ints5){
+         for (int val: array){
+              System.out.printf("%d ", val);
+         }
+         System.out.println("");
+     }
+    ````

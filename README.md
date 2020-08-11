@@ -21,3 +21,5 @@
  * [다형성(Polymorphism)](https://github.com/limjoonchul/TIL/blob/master/Java/documents/OOP/Java-Polymorphism.md)
  ### OOP_Advance
  * [추상클래스(Abstract Class)](https://github.com/limjoonchul/TIL/blob/master/Java/documents/OOP_Advance/Java-AbstractClass.md)
+ * [인터페이스(Interface)](https://github.com/limjoonchul/TIL/blob/master/Java/documents/OOP_Advance/Java-Interface.md)
+ * [열거형(Enumeration)](https://github.com/limjoonchul/TIL/blob/master/Java/documents/OOP_Advance/Java-Enumeration.md)

@@ -1,19 +1,19 @@
 # 열거형(Enumeration)
 2020-08-11 3-2차
-##열거형이란
+## 열거형이란
  * enum 키워드로 표현
   * '이넘' 이라고 부름
   * 내부적인 구현은 `enum` -> `java.lang.Enum` 클래스를 상속 하는 것
   * enum은 다른 클래스를 상속하지 못함 이미 상속하는 클래스(java.lang.Enum) 가 있기 때문에
   
-##열거형의 특징
+## 열거형의 특징
   * 접근 제한자는 `public`과 `default`만 사용 가능.
   * 열거형은 다른 클래스를 상속하지 못하지만, 인터페이스 구현은 가능
   * 클래스 변수와 마찬가지로 바로 사용이 가능하다.
   * 열거형 타입에는 열거형 상수와 null 값 할당 가능.
 ## 열거형의 구현
   * 일반적인 구현
-  ````
+  ````java
   // 클래스의 일종 자료형으로 쓰일 수 있음.
   enum Job{//실제 값은 0인데 자바에서는 숫자 개념으로 사용하지 말라는 것이 권고이다. 각 상수는 0부터 숫자를 가지지만, 심볼로만 사용하고 숫자는 사용하지 않음.
       STUDENT, MARKETING, DEVELOPER, CEO, CHIEF_EXECUTIONAL_OFFICER //열거형 상수 대문자 단어 구문은 _ 로 표현
@@ -60,7 +60,7 @@ public class Enumeration {
 }
   ````
  * 클래스 내부에서 열거형 구현
- ````
+ ````java
    class Foo{
        enum Symbol{
            ONE,TWO,THREE;
@@ -74,7 +74,7 @@ public class Enumeration {
 }
  ````
  * 열거형에 메소드 구현
- ````
+ ````java
  enum Symbol{
      ONE,TWO,THREE,FOUR;
      public Symbol nextSymbol(){
@@ -102,7 +102,7 @@ public class Enumeration {
  ````
 * 열거형에 생성자를 이용한 enum 초기화
    * 열거형의 생성자는 항상 `private`이며 생략 가능
- ````
+ ````java
  enum Family{
      FATHER("아버지"), MATHER("어머니"), SON("아들"), DAUGHTER("딸"); //열거형 상수(객체)
      // 여기서 객체가 생성되는 것임. 처음한번만 생성되는 거임

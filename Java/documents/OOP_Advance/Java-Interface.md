@@ -15,7 +15,7 @@
   * private abstract는 의미가 없다.
   * (자바에서는) 클래스는 하나만 상속할 수 있으나, 인터페이스는 여러개 가능
   * 인터페이스의 상속은 implements 키워드 사용
-  ````
+  ````java
   interface IFoo{
       public static final int MEMBER_VAR = 10; //변하지 않는 상수는 대문자_ 형식으로 사용하기 때문에 여기도 사용한다.
       int MEMBER_VAR2 = 20 ; //이렇게 사용해도ㅗ됨 PUBLIC STATIC FINAL;
@@ -43,7 +43,7 @@
   * 추상클래스도 추상클래스로 상속 가능했는데. 인터페이스도 인터페이스로 상속 가능 이 경우 extends 사용
   * 인터페이스에서 인터페이스로 상속하면 구현하는 것이아니라서 extends 사용
   * 클래스 <- 클래스 상속과 달리 다중 상속 가능
-  ````
+  ````java
   interface  Walkable{
       void walk();
   }
@@ -81,7 +81,7 @@
   * 인터페이스 철학과 맞지 않으나, 기존에 사용하던 인터페이스가 개선되어, 모든 자식 메소드에 동일하게
   *   구현되어야 하는 메소드가 생긴 경우에 쉽게 기능을 추가하기 위해 만들어짐.
   *   많은 클래스들이 상속하는 경우 인터페이스에서 상속하는 경우 선택적으로 오버라이드해서 사용할 수 있음
-   ````
+   ````java
   interface IFoo2{
       void abstractMethod();
       default void defaultMethod(){ //디폴트 메소드
@@ -122,7 +122,7 @@
  * 인터페이스의 static 메소드 : 클래스 메소드와 동일하게 사용 가능
    * 인터페이스 이름으로 호출 가능
    * 클래스 구현체의 이름으로도 호출 가능
-  ````
+  ````java
    interface IFoo {
        static void staticMethod() {
            System.out.println("static method");

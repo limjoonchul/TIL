@@ -33,7 +33,7 @@
   |public void printStackTrace()|예외가 발생된 메소드가 호출될 때의 Method call stack을 출력|
 ## 예외 처리 기법
 ### try ~ catch 구문
- ````
+ ````groovy
  try {
      // 예외가 발생할 수 있는 코드 영역
      // 예외 발생 시 예외 객체를 던짐 (throw)
@@ -46,7 +46,7 @@
  * 여러 개의 catch 구문을 사용하면 다중 예외를 처리할 수 있음.
  * if ~ else if 구문처럼, 순차적으로 검사하면서 적용 가능한 예외를 처리
  * 다형성이 적용되어, 자식 예외를 처리 가능
- ````
+ ````groovy
  try {
      // 예외 발생 가능 코드 영역
  } catch (AException e) {
@@ -63,7 +63,7 @@
  * try 구문 실행 중에 어떤 일이 발생해도 반드시 실행되어야 하는 구문은 finally 블록에 작성
  * try 구문 내에 return문이 있는 경우에도 finally 블록은 실행됨
  * try 구문 내에서 접근한 System 자원을 안전하게 복구하기 위해 사용
- ````
+ ````groovy
  FileInputStream file = null;
  try {
      file = new FileInputStream(fileName);
@@ -83,7 +83,7 @@
 ### try ~ catch ~ resources 구문
 * Java 1.7에서 추가된 기능
 * AutoClosable 인터페이스를 구현하는 리소스를 자동으로 close 처리
-````
+````groovy
 try (FileInputStream file = new FileInputStream(fileName)) {
     file.read();
 } catch (IOException e) {
@@ -94,7 +94,7 @@ try (FileInputStream file = new FileInputStream(fileName)) {
 ### throws
 * 호출한 메소드로 예외 처리를 전달하는 방식
 * Checked Exception의 경우 throws로 위임 가능하나, 최종적으로 try ~ cath를 만나야 함
-  ````
+ ````groovy
   class CheckedException {
       void methodA() throws ClassNotFoundException {
           Class.forname("A Class");
@@ -107,10 +107,10 @@ try (FileInputStream file = new FileInputStream(fileName)) {
               ...
           }
       }
-  }
+    }
   ````
 * Unchecked Exception의 경우 throws로 위임하지 않아도 자동으로 전달
-  ````
+ ````groovy
   class UncheckedException {
       void methodA() {
           int x = 10;
@@ -126,7 +126,7 @@ try (FileInputStream file = new FileInputStream(fileName)) {
   }
   ````
 * 메소드를 오버라이드한 경우, 조상 클래스의 메소드보다 조상 예외는 던질 수 없음
-  ````
+ ````groovy
   class Foo {
       void methodA() throws IOException {}
   }
@@ -146,7 +146,7 @@ try (FileInputStream file = new FileInputStream(fileName)) {
 ### throw
 * 예외를 발생시키는 키워드
 * new 키워드로 새 Exception 객체를 생성하여 예외 내용을 작성
-  ````
+ ````groovy
   void exceptMethod() throws Exception {
       ...
       if (Err) {
@@ -158,7 +158,7 @@ try (FileInputStream file = new FileInputStream(fileName)) {
 ## 사용자 정의 예외(Custom Exceptions)
 * Exception 또는 RuntimeException 클래스를 상속하여 작성
   * Exception을 상속한 경우 Checked Exception이 되어 반드시 예외를 처리해야 한다.
-  ````
+ ````java
   class MyException extends RuntimeException {
       enum ErrorCode {
           ERROR_A, ERROR_B;

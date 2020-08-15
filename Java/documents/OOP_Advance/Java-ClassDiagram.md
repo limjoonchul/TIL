@@ -14,7 +14,7 @@
 * Graphviz 설치 (https://graphviz.org/download/)
 * Plant UML의 문법
    * 클래스, 추상클래스, 인터페이스
-   ````
+ ````java
    interface IFoo {
        void method();
    }
@@ -38,11 +38,11 @@
     * Aggregation `o--`
     * Composition `*--`
   * 타이틀
-  ````
+  ````markdown
   title 클래스 다이어그램 제목
   ````
   * 노트
-  ````
+  ````markdown
   note left of Foo
     노트 <b>내용</b> 작성
   end note

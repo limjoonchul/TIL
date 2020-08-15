@@ -15,12 +15,12 @@
 |boolean|Boolean|
 ## Wrapper 객체 생성
 * 생성자를 이용한 객체 생성
-````
+````groovy
 Integer integer = new Integer(10);
 Character character = new Character('v');
 ````
 * valueOf를 이용한 객체 생성
-````
+````groovy
 Integer integer1 = Integer.valueOf(10);
 Character character1 = Character.valueOf('v');
 ````
@@ -28,29 +28,29 @@ Character character1 = Character.valueOf('v');
 * 객체로 사용될 때 오토박싱, 다시 Primitive Type이 되는건 언박싱.
 * Autoboxing
   * Java1.5부터 추가된 기능으로, 객체로 다루어야 할 때 자동으로 Wrapper 클래스로 변경하는 기능
-  ````
-  public static <T> T bypass (T x){
+ ````groovy
+    public static <T> T bypass (T x){
       return x;
-  }
+    }
   
-  Integer integer2 = 4;
-  System.out.println(add(4,2));
-  bypass(5); // 원래는 프리미티브 타입을t에 넣을 수 없는데 autoboxing이 이뤄져서 가능.
-  // T: wrapper class인 integer로 결정됨
-  // 5 -> new Integer(5) autoboxing 1.5버전 이후로 가능해짐.
-  ````
+    Integer integer2 = 4;
+    System.out.println(add(4,2));
+    bypass(5); // 원래는 프리미티브 타입을t에 넣을 수 없는데 autoboxing이 이뤄져서 가능.
+   // T: wrapper class인 integer로 결정됨
+   // 5 -> new Integer(5) autoboxing 1.5버전 이후로 가능해짐.
+ ````
 * Unboxing
   * Wrapper 객체를 기본형으로 자동으로 변경하는 기능
-   ````
-   int m = new Integer(10); 
+ ````groovy
+ int m = new Integer(10); 
    
-   int i = 10;
-   Integer wrapped = i;
-   int b = 20 + wrapped;
-   ````
+ int i = 10;
+ Integer wrapped = i;
+ int b = 20 + wrapped;
+ ````
 ## Wrapper 타입의 값 비교
 * Wrapper 타입은 객체이므로, ==를 이용하여 값을 비교할 수 없다.
-````
+````groovy
 Integer intOne = new Integer(100);
 Integer intTwo = new Integer(100);
 
@@ -60,12 +60,12 @@ System.out.println(intOne == 100) // true (Unboxing)
 ````
 ## 문자열의 기본 자료형 반환
 * Parsing 정적 메소드를 이용한 반환
-````
+````groovy
 int x = Integer.parseInt("100");
 long y = Long.parseLong("512345124");
 ````
 * Wrapper 객체로의 반환
-````
+````groovy
 Integer intObj = Integer.valueOf("1000");
 Integer intObjTwo = new Integer("1234");
 ````

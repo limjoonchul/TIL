@@ -2,7 +2,7 @@
 ## 클래스(Class)
 ### 클래스와 객체
  * 클래스 - 객체를 생성하기 위한 설계도(class)
-    ````
+ ````groovy
     class Car{ // 클래스 이름은 보통 PascalCase로 적는다. ex)CarShop
         int speed = 0; // 속성, 멤버 변수라고도 한다.
         // 용어 중요**
@@ -13,9 +13,9 @@
         }
     }
     
-    ````
- * 객체 - 클래스를 구체화하여 값으로 생성된 것(object, instance)
    ````
+ * 객체 - 클래스를 구체화하여 값으로 생성된 것(object, instance)
+  ````groovy
    Car carOne = new Car(); // new 키워드로 클래스에서 객체 생성
    System.out.println(carOne.speed); // .으로 속성 접근 가능
    carOne.move(); // 메소드 호출(method call) 이라고 부름.
@@ -39,7 +39,7 @@
 ### 변수
  * 클래스에 사용되는 변수들
   
-  ````
+  ````markdown
  - 종류
   *  클래스 멤버 변수(static variable, class variable)
   *  인스턴스 멤버 변수(member variable, attribute...)
@@ -49,7 +49,7 @@
 
   ````
  * 변수들 실제 예제
- ````
+ ````java
  public class Variable {
      static int classVar; // 클래스 멤버 변수, 스태틱 변수(정적 변수) 바로 메모리에 올라감.
      int instanceVar; // 인스턴스 멤버 변수, 필드, 속성
@@ -72,7 +72,7 @@
  ````
 
 * 테스트
-````
+````java
 class VariableTest{
     public static void main(String[] args) {
         System.out.println("클래스 변수");
@@ -101,7 +101,7 @@ class VariableTest{
 ````
 ### 클래스와 객체의 메모리 구조
  * 클래스와 객체의 메모리 구조 특징
- ````
+ ````markdown
  *  - 클래스 영역(class area, method area, code area, static area) 클래스의 공통된 부분이 들어감 어떤 필드가 있는지 어떤 타입을 갖는다던지
  *  어떤메소드가 있고 어떤동작을 하는 코드라던지. 프로그램이 돌아가면 계속 존재함.
  *   -> field 정보, method 정보, type 정보, constant pool
@@ -113,7 +113,7 @@ class VariableTest{
  *
  ````
  * 클래스와 객체의 메모리 구조 예제
-  ````
+  ````java
   public class MemoryStructure { // 클래스 영역
       int x, y; // 힙 영역 객체에 속하기 때문에 객체를 콜할 때는 힙 영역에 들어감. 객체에 속하는 속성들이므로.
       // 클래스가 아니기 때문에 값 자체가 담긴다.(32비트 값을 잡아서 쓰여져있음)
@@ -133,14 +133,14 @@ class VariableTest{
  * 객체가 하는 동작(행위)을 정의하는 작업을 수행하는 코드의 집합이자 나열
  * 코드의 중복을 방지, 유지보수성을 향상, 코드의 가독성을 개선하는 역할을 한다.
  
-  #### 메소드의 구현
+#### 메소드의 구현
    * 메소드는 함수의 형태로 구성된다.
      * 파라미터(Parameters,입력)
      * 실행문(Executional Statements)
      * 리턴 값(Return Value, 출력)
      
    * 함수의 작성
-   ````
+   ````groovy
    // 인스턴스 메소드, 메소드 라고도 부름
        //return type(출력의 자료형)
        public  int add(int x, int y)// 여기까지는 선언 // 입력 파라미터.
@@ -151,7 +151,7 @@ class VariableTest{
        // 정의(Definition) - 선언 + 구현(초기화)
    ````
    * 가변 인자(Variable Arguments)
-   ````
+   ````groovy
    public static int sumAll(int...params){ // 여러개의 int를 입력 받는다 라는 의미.
         // 입력받은 결과는 배열로 주어진다. 배열로 넘어옴.(가변 인자 variable arguments)
         int sum = 0;
@@ -165,7 +165,7 @@ class VariableTest{
      * 기본형: 메소드 인자로 값이 전달됨(Call by Value)
      * 참조형: 메소드 인자로 참조가 전달됨(Call by Reference)
    
-   ````
+   ````groovy
    public static void swapPrimitive(int x, int y){
         //int x, int y의 사본이 넘어온다. 외부와 전혀 상관없는 값이 된다. 밖에 있는 값에 영향을 주지 못한다.
         // 기본형 타입인 경우에 해당.
@@ -203,7 +203,7 @@ class VariableTest{
      * static 키워드를 이용하여 선언된 메소드
      * 인스턴스가 아닌 클래스에 속하는 메소드
      * 대표적으로 main 메소드가 클래스 메소드이다.
-   ````
+   ````groovy
    ex 1)
    public  static  void classMethod(){
         System.out.println("클래스 메소드 호출");
@@ -243,7 +243,7 @@ class VariableTest{
 #### 메소드 오버로딩
    * 동일 기능의 함수를 추가로 구현하는 방법
    * 입력 파라미터를 다르게 해서 동일한 함수명으로 구현한다.
-   ````
+   ````groovy
    public static void swapReference(Foo x, Foo y){
         // Foo - > class, class는 참조형 변수
         // 참조형 변수이기 때문에 x,y에 참조가 넘어오게 된다.
@@ -276,7 +276,7 @@ class VariableTest{
    * 입력 파라미터를 받는 생성자
    * 여러개의 파라미터 생성자를 오버로딩할 수 있음
    * 보통 멤버 변수를 초기화하는 동작 수행
- ````
+ ````java
  public class Constructor {
      int x;
      int y;
@@ -319,7 +319,7 @@ class VariableTest{
   * 멤버 변수와 로컬 변수의 이름이 같을 때, 멤버 변수임을 명시
   * 생성자를 호출하는 데에도 사용할 수 있다.
   * 반드시 생성자의 첫 줄에서만 사용해야 한다.
-  ````
+  ````java
    public class Constructor {
        int x;
        int y;
@@ -353,7 +353,7 @@ class VariableTest{
   * 클래스의 멤버 변수를 간접적으로 다룰 수 있게 하는 메소드
   * 멤버 변수의 캡슐화를 구현하기 위해 사용. -> 정보은닉 / 보호
   * 멤버 변수의 값을 제한해야 할 때 유용.
-  ````
+  ````java
    public class Main {
        int x,y;
 
@@ -401,7 +401,7 @@ class VariableTest{
   ````
 ### 초기화 블록(Initializer)
  * 클래스 또는 인스턴스를 생성할 때 단 한번 실행되는 코드 블록
- ````
+ ````java
  public class Main {
      static int classVar;
      static  int instanceCount;

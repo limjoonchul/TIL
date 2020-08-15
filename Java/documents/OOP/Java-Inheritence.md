@@ -9,7 +9,7 @@
 ## 클래스의 관계
 ### 클래스의 상속
 * 부모 클래스
-````
+````java
 class Person{
     String name;
     public void work(){
@@ -21,7 +21,7 @@ class Person{
 }
 ````
 * 자식 클래스
-````
+````java
 // person을 상속하는 자식 클래스 extends 키워드를 이용하여 상속
 class Developer extends  Person{
     String mainLang;
@@ -30,7 +30,7 @@ class Developer extends  Person{
     }
 }
 ````
-````
+````java
 class Student extends  Person{
     String major;
 
@@ -45,7 +45,7 @@ class Student extends  Person{
 * 내부에 포함하고 'HAS-A' 관계로 표현된다.
 * 특별히 자바에선 'HAS-A' 관계가 포함된 경우는 많이 없음, 알게모르게 중
 * 클래스 컴포지션 (Composition)이라 부른다.
-````
+````java
 // 메인머신 'HAS-A' String 이미 스트링을 컴포지션하고 있었다.
 class MainMachine{
     String model;
@@ -56,7 +56,7 @@ class MainMachine{
     }
 }
 ````
-````
+````java
 // developer 'HAS-A; MainMachine 개발자클래스가 메인머신의 객체 하나를 보유한다.
 // 보유하고 있어서 메인커신의 속성을 건드릴 수 있다.
 class Developer{
@@ -96,12 +96,12 @@ MainMachine mac = new MainMachine("MacBook Pro");
     }
 }
 ````
-##메소드 재정의
+## 메소드 재정의
 ### 메소드 재정의(Method Overriding)란?
 * Override -> 덮어씌운다, 해킹해서 뭔가 달라지게 한다.
 * 기존의 있던걸 덮어씌워서 다른걸로 변형시키는 것
 * 다형성 (polymorphism)의 근간이 됩니다.
-````
+````java
 class Person{
     public void writeCode(){
         System.out.println("아무 코드나 일단 적어 보았다.");
@@ -128,7 +128,7 @@ class Developer extends Person{
  * 다만 super.super 라는 식으로 부모의 부모는 참조할 수 없다. 바로 윗 부모만 가능.
  * 자식 객체를 생성을 하면, 부모 객체를 먼저 생성하고, 그 다음에 자식 객체를 생성하게 된다.
  * 자식 객체를 생성할대마다 부모 객체를 따로따로 만들어서 가지고 있음.
-````
+````java
 class Foo{
     String x = "Foo";
 

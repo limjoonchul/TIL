@@ -1,12 +1,12 @@
-#다형성(Polymorphism)
+# 다형성(Polymorphism)
 2020-08-10 3-1차
-##다형성의 다양한 특징
+## 다형성의 다양한 특징
  * 오버라이딩에 의한 다형성
  * 오버라이딩에 의햔 다형성(상속에 의한 다형성)
  
  * 부모 클래스 타입으로 자식 클래스 객체를 참조하는 특징
  * 부모 클래스로 자식 클래스를 참조한 경우, 자식 클래스의 메소드는 사용할 수 없다.
- ````
+ ````java
 class Foo{
     public void methodA(){
     }
@@ -42,7 +42,7 @@ public class Poly01 {
 }
  ````
  * 자식클래스로 부모 클래스를 참조하려 하면 java.lan.ClassCastException 오류 발생
- ````
+ ````java
  public class Main {
      public static void main(String args[]) {
          Foo foo = new Foo();
@@ -58,7 +58,7 @@ public class Poly01 {
   * 멤버 변수의 재정의는 선언된 객체의 타입을 따른다. (문법적으로 본다) 클래수 변수도 마찬가지 변수는 별도의 메모리에 저장됨.
   * 메소드 오버라이딩은 메모리상의 객체 타입을 따른다. (실제 객체로 본다)
   * (가상 메소드 호출, virtual method call)
-  ````
+  ````java
   class  Foo{
       static public String y = "super class";
       public String x = "Super";
@@ -97,7 +97,7 @@ public class Poly01 {
   }
   ````
  * 공변 변환 타입(Covariant return type)
- ````
+ ````java
  class Foo{
      public Foo getInstance(){
          return this;

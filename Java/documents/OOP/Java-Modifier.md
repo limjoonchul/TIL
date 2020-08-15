@@ -9,7 +9,7 @@
    * 특별한 기능을 부여하는 제어자
    * static, final, abstract, synchronized
 #### 접근 제어자
-````
+````java
 ckage com.company.s04.p05.subp01;
 public class ClassA {
     public  int x;
@@ -51,7 +51,7 @@ class ClassATest{ // 같은 패키지인 경우.
 }
 ````
 * 다른 패키지
-````
+````java
 package com.company.s04.p05.subp02;
 import com.company.s04.p05.subp01.ClassA;
 
@@ -86,7 +86,7 @@ public class ClassB {
     }
 }
 ```` 
- #### 그 외의 제어자
+#### 그 외의 제어자
   * final 
   * - 더 이상 바꿀 수 없음을 의미 상수.
   * - 클래스, 메소드, 변수에 사용 가능
@@ -112,10 +112,10 @@ public class ClassB {
     * 동시성 프로그래밍에 사용.
 
  
- ## 싱글톤 패턴(Singletone)
+## 싱글톤 패턴(Singletone)
  * 객체가 단 하나만 존재할 수 있는 클래스
  * private 생성자를 이용한다.
-````
+````java
 class SingletonClass {
   private static SingletoneClass instance = new SingletonClass();
   private SingletonClass() {}

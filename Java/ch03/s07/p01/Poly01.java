@@ -40,7 +40,5 @@ public class Poly01 {
         // foo변수에 자식객체가 담겨져있는지 부모객체가 담겨져있는지 문법적으로 알수없음
         bar1.methodA();
         bar1.methodB();
-
-
     }
 }

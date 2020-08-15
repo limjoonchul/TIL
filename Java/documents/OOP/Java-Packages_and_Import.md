@@ -10,16 +10,16 @@ ex) package com.google.dev.utils ex) package com.fastcampus.catcare.service
   1. java. lang. * - import를하지않아도 자동으로 되어있음 예를들어 string
   2. auto import 
 * 패키지에 속한 모든 클래스를 import (하위 패키지는 포함하지 않음)
-````
+````groovy
 import com.example.project.utils.*;
 ````
 * 패키지에 속한 특정 클래스를 import(권장 방법)
-````
+````groovy
 import com.fastcampus.dogcare.service.WebAPI;
 import java.io.InputStream;
 ````
 * 클래스의 이름이 겹치는 경우, 패키지명을 포함하여 사용(권장 방법)
-````
+````java
 import java.util.List;
 
 public class Foo {
@@ -30,7 +30,7 @@ public class Foo {
 }
 ````
 * static 멤버는 static import하여 클래스를 생략하고 사용 가능(권장 x)
-````
+````java
 import static java.lang.Math.random;
 import static java.lang.System.out;
 

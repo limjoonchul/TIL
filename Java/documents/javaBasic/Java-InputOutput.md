@@ -1,5 +1,5 @@
-#Java 1-3(2020-07-30)
-####ch02_s03
+# Java 1-3(2020-07-30)
+#### ch02_s03
 ## 자료의 입출력(Inputs and Outputs)
 ### 출력 메소드
 * 포맷 문자열을 이용한 문자열/기본형 출력
@@ -15,18 +15,19 @@
     * public PrintStream printf(String format, Object ... args)
     * Format 맞추어 args를 출력한다.
     * 정수 포맷팅
-        ````
-        - System.out.printf("%5d.\n", 10); //5d 5자리 확보 ...10
-        - System.out.printf("%3d\n",104294); //자릿수가 더크면 그대로 출력이된다. 3칸은 최소한 확보하는 것
-        ````
+    ````groovy
+    System.out.printf("%5d.\n", 10); //5d 5자리 확보 ...10
+    System.out.printf("%3d\n",104294); //자릿수가 더크면 그대로 출력이된다. 3칸은 최소한 확보하는 것
+   ````
     * 실수 포맷팅
-        ````
-       - System.out.printf("%5d.\n", 10); //5d 5자리 확보 ...10
-       - System.out.printf("%3d\n",104294); //자릿수가 더크면 그대로 출력이된다. 3칸은 최소한 확보하는 것
-        ````
+    
+   ````groovy
+     System.out.printf("%5d.\n", 10); //5d 5자리 확보 ...10
+     System.out.printf("%3d\n",104294); //자릿수가 더크면 그대로 출력이된다. 3칸은 최소한 확보하는 것
+   ````
 ### 입력 메소드
  * Scanner 클래스를 이용하여 입력받을 수 있다.
-   ````
+  ````groovy
    import java.util.Scanner;
    
    ...

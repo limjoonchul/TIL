@@ -7,7 +7,7 @@
  * 문자열 편집은 String을 쓰지 않고 Builder나 Buffer 등을 사용한다.
  
  * 문자열의 생성
- ````
+ ````groovy
 String s1 = "문자열 생성 방법";
 String s2 = new String("문자열 생성 방법2"); //클래스 생성자 권장하지 않음.
 
@@ -22,7 +22,7 @@ s3.equals(s4) // true
 s3.equals(s5) // true
  ````
  * 문자열안의 메소드
- ````
+ ````markdown
  String s = "This is a string" 일 때,
  - s.length() : 문자열의 길이를 나타냄
  - s.charAt(2) : 특정 문자의 인덱스 출력

@@ -1,6 +1,6 @@
-#Java 1-2(2020-07-27)
+# Java 1-2(2020-07-27)
 #### ch02_s02
-##자료형(Data Type)
+## 자료형(Data Type)
 
 ### 자료형이란
  * 변수의 종류, 타입
@@ -25,17 +25,17 @@
    * 유니코드는 \u + 16진수로 표현 ex) char unicodeCharacter = '\u0041';
 #### 논리형
  * true, false 두 가지 값만이 허용된다.
-  ````
+  ````groovy
   boolean isTrue = true;
   boolean isFalse = false;
   ````
 #### 문자열
  * 문자열은 참조형 자료형이며, 큰 따옴표로 표현한다.
- ````
+ ````groovy
   String s = "문자열은 큰따옴표로 묶는다.";
  ````
  * 문자열은 덧셈으로 이어 붙일 수 있다. 문자열로 변환이 가능한 자료형은 문자열로 변환되어 결합한다.
- ````
+ ````groovy
   String s1 = "a" + "b" + "c";
   String s2 = 1 + "1" + 3;
  ````
@@ -45,7 +45,7 @@
 #### 업캐스팅(Upcasting)
  * 값의 범위가 더 큰 자료형으로 변환하는 경우
    * <u>묵시적/명시적</u> 방법 모두 사용 가능
-   ````
+  ````groovy
    byte x = 10;
    int y = (int)x;
    int z = x;
@@ -53,7 +53,7 @@
 #### 다운캐스팅(Downcating)
  * 값의 범위가 더 큰 자료형으로 변환하는 경우
    * <u>명시적인</u> 방법으로만 캐스팅 가능
-   ````
+  ````groovy
    int x = 1024;
    // byte y = x;
    byte z = (byte)x;

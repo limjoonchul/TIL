@@ -5,7 +5,7 @@
  * 수학의 선 -> 면 -> 공간 등과 동일한 개념
 ### 다차원 배열의 생성
  * 다차원 배열의 선언 및 초기화
- ````
+ ````groovy
  int [][] ints;
  int [] halfCStyle[]; //hybrid 안좋음
  int oldCStlye[][]; // lod... 안좋음
@@ -21,7 +21,7 @@
  int [][] ints5 = {{1,3,2},{1,2},{4,5,3}}; //[3][] 두개짜리는 실제 길이가 더 짧은 것 비어있는게 아니다.
  ````
 ###  배열의 반복문
- ````
+ ````groovy
  for (int i=0; i<ints5.length; i++){ //과제에 이용하면 역순 가능.
      System.out.printf("[%d]", ints5[i].length);
      for (int j=0; j<ints5[i].length; j++){

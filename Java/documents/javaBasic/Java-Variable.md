@@ -1,5 +1,5 @@
-#Java-first(1-1)
-##자바 백엔드 개발 스쿨 시작(2020-07-27)
+# Java-first(1-1)
+## 자바 백엔드 개발 스쿨 시작(2020-07-27)
 #### java_first, ch02_s01
 ## Hello World 출력
 ## 변수란(Variable)

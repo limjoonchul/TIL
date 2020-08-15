@@ -5,7 +5,7 @@
 ### 다양한 조건문
 #### if 계열 조건문
  * if문
- ````
+ ````groovy
   if(조건식)
     // 실행문
   
@@ -14,7 +14,7 @@
   }
  ````
  * if~else 문
- ````
+ ````groovy
  if(조건식) {
    // 조건식이 true일때 실행할 실행문
  } else {
@@ -22,7 +22,7 @@
  }
  ````
  * if~else if~else문
- ````
+ ````groovy
  if(조건식1) {
    // 조건식1이 true일때 실행할 실행문
  } else if(조건식2) {
@@ -32,7 +32,7 @@
  }
  ````
  * Nested(둥지) if문 = 중첩 if문
- ````
+ ````groovy
 if (score >=90 ){
    System.out.println("A");
 }else if(score >=80){
@@ -50,7 +50,7 @@ if (score >=90 ){
  * case범위가 될 수 없고, case도 값이어야 합니다.
  * break가없으면 다른 케이스로 계속 넘어감, fall-through가 발생함.
  * fall-through를 의도하지 않았다면 주석을 달아줘야한다.
- ````
+ ````groovy
   grade = 'F';
   switch (grade){
       case 'A':

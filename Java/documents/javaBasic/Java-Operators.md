@@ -47,8 +47,10 @@
    ![사칙연산](../images/사칙연산자.png)
    
 2. 복합 대입 연산자
+
      ![복합대입연산자1](../images/복합대입연산자.png)
      ![복합대입연산자1](../images/복합대입연산자2.png)
+     
      * 대입 연산자와 다른 연산자가 함께 쓰인다.
        ````markdown
         z +=10, z-=10, 논리 연산자, 비트 연산자 등등 다 된다.
@@ -62,7 +64,7 @@
         ````
 
 4. 논리 연산자(입출력이 모두 boolean)
-    ````groovy
+  ````groovy
      a AND b : a,b 모두 참일때만 참
      a OR b : a,b 둘중 하나만 참이어도 참
      a XOR b : a 또는 b 둘중 하나만 참이어야 참 //exclusive or, 배타적 OR
@@ -72,7 +74,7 @@
      System.out.println(!true);
      System.out.println(!(10>20)); //NOT
      System.out.println(10 > 2 ^ 5 < 2); //XOR true
-    ````
+   ````
    * 단릭 회로 평가(short circuit evaluation)
    
      * 논리 곱(&&)은 두 항이 모두 true일 때만 결과가 true
@@ -84,7 +86,7 @@
      * 실제 프로그램에서 예상하지 않는 결과가 발생할 수 있으므로 주의
    
 5. 증감 연산자 = 단항 연산자
-   ````groovy
+  ````groovy
     int val = 0;
     System.out.println(val++); // val = 0으로 먼저 Expression 평가 후에 val += 1 적용
     // sout(val); // val +=1;
@@ -94,7 +96,7 @@
    ![증감,감소연산자](../images/증감,감소연산자.png)
    
 6. 삼항 연산자
-   ````groovy
+  ````groovy
     > boolean             값                 값
     (condition)? (true Expression):(false Expression)
     
@@ -110,7 +112,7 @@
    * `>>` 연산자 : 좌측 피연산자의 각 비트를 우측으로 우측 피연산자만큼 이동시킨다. 빈자리는 Sign Bit로 채운다.
    * `>>>`연산자 : 좌측 피연산자의 각 비트를 우측으로 우측 피연산자만큼 이동시킨다. 빈자리는 0으로 채운다.
    
-   ````groovy
+  ````groovy
     System.out.printf("b%32s\n", Integer.toBinaryString(7)); b                             111</br>
     System.out.printf("b%32s\n", Integer.toBinaryString(7 >> 1)); b                              11</br>
         

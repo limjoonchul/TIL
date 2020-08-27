@@ -4,7 +4,14 @@
 * 클래스, 변수, 메소드에 부가 기능을 부여하는 키워드
 * 접근 제어자 (Access modifiers)
    * 접근할 수 있는 범위를 정하는 키워드
-   * public, protected, (default = package), private
+   * 자바 파일명과 같은 public class 클래스명이 꼭 있어야 한다.
+   * private – 같은 클래스에서만 사용가능, 내부 구현을 위해서만 사용한다.
+   * default – package라고도 한다 제어자명은 생략한다. 사용범위가 같은 패키지안에서 가능.
+   * protected – private와 비슷하게 사용이 되나, 상속한 경우 구현 시 접근이 필요할 때 사용.
+               자식이면 다른 패키지여도 접근할 수가 있다, 하나의 자식외에는 못본다, 부모의 부모는 건들 수 없다.
+   * public – 모든 곳에서 사용가능.
+   * 클래스는 public 과 default만 사용 가능하다.
+   
 * 그 외 제어자 (Other modifiers)
    * 특별한 기능을 부여하는 제어자
    * static, final, abstract, synchronized
@@ -112,7 +119,7 @@ public class ClassB {
     * 동시성 프로그래밍에 사용.
 
  
-## 싱글톤 패턴(Singletone)
+# 싱글톤 패턴(Singletone)
  * 객체가 단 하나만 존재할 수 있는 클래스
  * private 생성자를 이용한다.
 ````java
@@ -125,3 +132,4 @@ class SingletonClass {
   }
 }
 ````
+

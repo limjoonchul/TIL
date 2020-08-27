@@ -21,7 +21,7 @@ s3 == s5 : //false 문자열을 클래스로 생성할 경우 새로운 값을 �
 s3.equals(s4) // true
 s3.equals(s5) // true
  ````
- * 문자열안의 메소드
+ * 문자열 안의 메소드
  ````markdown
  String s = "This is a string" 일 때,
  - s.length() : 문자열의 길이를 나타냄

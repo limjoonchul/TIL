@@ -34,7 +34,7 @@
 
 ### Q4. 다음 코드를 실행한 결과 콘솔에 출력되는 내용을 적으시오. *`답 : 11111111111111111111111111111111 `
 
-![weeklytest08](./images/weekelytest1-4.png)
+![weeklytest08](../images/weekelytest1-4.png)
 
 * -1은 원래 11111111111111111111111111인데 왼쪽으로 시프트연산 해도 똑같은 값이 
 나온다.
@@ -54,7 +54,7 @@
 
 
 ### Q6. 아래 코드의 실행 결과를 쓰시오. *`정답 1-110`
-![weeklytest08](./images/weekelytest1-6.png)
+![weeklytest08](../images/weekelytest1-6.png)
 
 * ++x > 0 & y--　＜0　에서 x는 증가해서 1이되고 y는감소해서 –1이 된다. 
 * & 연산은 둘다 참일 때 조건문이 실행되는데 참이아니여서 실행이 안됨
@@ -73,7 +73,7 @@
 
 
 ### Q8. 아래 코드를 실행한 결과 콘솔에 출력되는 내용을 입력하시오. `답 : 0137`
-![weeklytest08](./images/weekelytest1-8.png)
+![weeklytest08](../images/weekelytest1-8.png)
 
 * I의 값이 2가 곱해서 증가하므로 0부터 홀수 숫자만 출력됨
 

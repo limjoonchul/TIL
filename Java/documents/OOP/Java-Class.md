@@ -1,7 +1,19 @@
 # Java 2-1
-## 클래스(Class)
-### 클래스와 객체
- * 클래스 - 객체를 생성하기 위한 설계도(class)
+# 클래스(Class)
+
+## 클래스 - 객체를 생성하기 위한 설계도(class)
+ * 문자열(String) - 한번 만든 문자열은 변하지 않는다. (Immutable) 그래서 새로운 문자열을 만들어서 값을 넣어 주는 것과 같다.
+ * 클래스는 문자열과 달리 mutable 변할 수 있다.
+ * 참조형 객체이기 때문에new일때만 새로운 객체를 생성하고,이렇게하면 같은 객체를 가르킨다.
+ * 이처럼 carThree 에 carOne을 넣었을 때 Three에서 속성 값을 변경시켰을 때 one의 속성값도 변경됨.
+ ```groovy
+ Car carThree = carOne;
+ 
+ System.out.println(carThree.speed); //carThree.speed = 5;
+ System.out.println(carThree.speed);// 5
+ System.out.println(carOne.speed);// 5
+ ```
+ 
  ````groovy
     class Car{ // 클래스 이름은 보통 PascalCase로 적는다. ex)CarShop
         int speed = 0; // 속성, 멤버 변수라고도 한다.
@@ -14,7 +26,9 @@
     }
     
    ````
- * 객체 - 클래스를 구체화하여 값으로 생성된 것(object, instance)
+## 객체 - 클래스를 구체화하여 값으로 생성된 것(object, instance)
+ * 객체는 클래스를 구체화하여 값을 생성하는 것을 객체라 한다.
+ * 하나의 클래스로 여러개의 객체를 만들 경우, 같은 타입의 `독립적인` 객체가 됨
   ````groovy
    Car carOne = new Car(); // new 키워드로 클래스에서 객체 생성
    System.out.println(carOne.speed); // .으로 속성 접근 가능
@@ -31,45 +45,65 @@
    System.out.println(carThree.speed);// 5
    System.out.println(carOne.speed); // 5
    ````
-  
-   
+
  * 클래스를 객체로 만드는 과정 - > instanciation (인스턴스화)
- 
 
-### 변수
- * 클래스에 사용되는 변수들
-  
-  ````markdown
- - 종류
-  *  클래스 멤버 변수(static variable, class variable)
-  *  인스턴스 멤버 변수(member variable, attribute...)
-  *  로컬 변수(local variable)
-  *  로컬 파라미터 변수 (local parameter variable)
-  *                    (arguments)
+## 변수
+1. 클래스 멤버 변수(static variable, class variable)
+2. 인스턴스 멤버 변수(member variable, attribute...)
+3. 로컬 변수(local variable)
+4. 로컬 파라미터 변수 (local parameter variable)(arguments)
 
-  ````
- * 변수들 실제 예제
- ````java
- public class Variable {
-     static int classVar; // 클래스 멤버 변수, 스태틱 변수(정적 변수) 바로 메모리에 올라감.
-     int instanceVar; // 인스턴스 멤버 변수, 필드, 속성
+1. 클래스 멤버 변수(스태틱, 정적 변수)
+      * static을 이용하여 정의하는 변수를 말하며, 클래스에서 바로 접근하는 변수를 의미 한다.  
+      * 객체명으로도 접근이 가능하지만 권장하지 않는다.
+      * new 될때마다 새롭게 잡히는 멤버변수와 달리 한번만 메모리가 잡히고 모든 인스턴스가 공유한다. 
+      * 처음 프로그래밍에 로드될 때 클래스영역에 생긴다.
+      * 인스턴스들이 공동으로 사용하는 변수, 외부에서 접근하지 못하게 private으로 하는게 좋음.
+      * 초기화를 안해줬을 경우, 자동으로 자료형의 기본값으로 초기화 됨.(자동으로 초기화가 안이루어지는 경우도 있음.)
  
-     public void method(int paramVar){ //로컬 파라미터 변수
-         System.out.println(paramVar);
-         int localVar; //로컬 변수
- //        System.out.println(localVar); //error 로컬변수는 초기화가 자동으로 안됨. **시험문제**
-         localVar = 10;
-         System.out.println(localVar); //이렇게 값을 대입해서 사용해야 한다.
- 
-         {
-             localVar = 30;
-             int localVar2 = 20;
-         }
-         System.out.println(localVar); //블록 내에서 수정한 것도 반영됨.
- //        localVar2 = 40; // 접근 불가. 생명주기가 끝났다. Life-Cycle이 끝났다.
-     }
- }
- ````
+  ````groovy
+   static int classVar; 
+   // 클래스 멤버 변수, 스태틱 변수(정적 변수) 바로 메모리에 올라감.
+   
+   System.out.println("클래스 변수");
+   System.out.println(Variable.classVar); 
+   //0으로 초기화됨(외워야 됨 어떤변수들은 초기화가 안이뤄지는 경우도 있음)
+   ````
+2. 인스터스 멤버 변수(필드, 속성) 
+   * 객체를 생성해서 사용하는 변수로 클래스명으로 접근이 불가능하다.
+   * 초기화를 안해줬을 경우, 자료형의 기본값으로 자동 초기화 됨.
+````groovy
+int instanceVar; // 인스턴스 멤버 변수, 필드, 속성
+System.out.println("인스턴스 멤버 변수");
+Variable var = new Variable();
+// 인스턴스를 만들어야 실체가 있기 때문에
+System.out.println(var.instanceVar);  
+//0으로 초기화가 됨.외워야됨.
+````
+
+3. 로컬 변수 
+   * 메소드 또는 중괄호 블록 내부에서 생성되는 변수
+   * 스택 영역에 생성되며, 초기화가 이루어지지 않음
+   * 생명 주기(Life cycle)은 생성된 중괄호 블록이 종료될 때 까지
+   
+4. 파라미터 변수 
+   * 메소드에서 값을 호출할 때 넣어 주는 변수. 메소드내부에서만 사용 가능.
+````groovy
+public void method(int paramVar){ //로컬 파라미터 변수
+  System.out.println(paramVar);
+  int localVar; //로컬 변수
+  System.out.println(localVar); //error 로컬변수는 초기화가 자동으로 안됨. 
+  localVar = 10;
+  System.out.println(localVar); //이렇게 값을 대입해서 사용해야 한다.
+  {
+    localVar = 30
+  };
+  int localVar2 = 20;
+}
+System.out.println(localVar); //블록 내에서 수정한 것도 반영됨.     
+localVar2 = 40; // 접근 불가. 생명주기가 끝났다. Life-Cycle이 끝났다.
+````
 
 * 테스트
 ````java
@@ -99,7 +133,18 @@ class VariableTest{
     }
 }
 ````
-### 클래스와 객체의 메모리 구조
+
+## 메모리 할당 시점
+````markdown
+변수가 메모리에 생성될 때는 초기화가 이루어지는 시점인데, 초기화가 되는 시점은
+클래스나 메소드에서 초기화 값을 준다고 해도 메모리에 생성이 되는게 아니다.
+변수를 선언하는 것은 메모리를 자료형의 크기만큼 쓰겠다라고 하는 것이다(메모리에 공간 확보)
+변수 초기화는 메모리에 실제 값을 할당 하는 것이다.
+메인 메소드안에 있는 변수들은 실행될 때 메모리에 생성됨.
+정적 변수 - 클래스가 생성이 될 때 메모리에 할당이 된다.
+````
+
+## 클래스와 객체의 메모리 구조
  * 클래스와 객체의 메모리 구조 특징
  ````markdown
  *  - 클래스 영역(class area, method area, code area, static area) 클래스의 공통된 부분이 들어감 어떤 필드가 있는지 어떤 타입을 갖는다던지
@@ -128,12 +173,59 @@ class VariableTest{
   
   }
   ````
+
+## String 타입의 메모리 구조
+ * class, method 같은 것들은 클래스 영역에 만들어지고, 
+ * method 안에 있는 값들은 스택영역에 만들어졌다가 method의 생명주기가 끝나면 사라짐.
+ * class 안에 변수들은 힙영역에 생성이 되는데, 정수, 실수형 변수는 constant pool 안에 정의 되어있는 값들을 가져와서 사용하는 것이고, 
+   String은 정의할 때 힙 영역에 값이 생성됨.
+ * 처음에 young메모리(nursery)에 생성되었다가 오랫동안 사용하면 올드메모리로 옮겨짐.
+ * new로 생성했을 때 기본적으로 young 메모리에 들어간다.
+ 
+ ````groovy
+ @org.junit.Test
+ public void testStringEquality (){
+     final String literal = "Hello";
+     final String object = new String("Hello");
+ 
+     Assert.assertTrue(literal.equals(object));
+     Assert.assertFalse(literal == object);
+ }
+ ````
+ * 위에서 String의 equals은 true, ==는 false가 나오는 경우를 볼 수 있는데,
+ * equals는 `문자열`을 비교하고, ==는 객체의 `주소값`을 비교하기 때문이다.
+ 
+ ````groovy
+ @org.junit.Test
+ public void testStringIntern(){
+     final String literal = "Hello";
+     final String object = new String("Hello");
+     final String intern = literal.intern();
+ 
+     Assert.assertTrue(literal.equals(object));
+     Assert.assertFalse(literal == object);
+     Assert.assertTrue(literal.equals(intern));
+     Assert.assertTrue(literal == intern);
+ }
+ ````
+`````markdown
+ 위의 코드를 보면 intern()메서드를 호출한 결과값을 intern 변수에 할당되는 것을 볼 수 있다. 
+ 그 후 literal과 object의 동일성(==)과 동등성(equals)를 비교해보면 둘다 true값이 나와 테스트에 성공하게 된다.
+ 리터럴로 "Hello"라는 문자열이 string constant pool에 저장되었고, 
+ inter() 메서드를 호출하면서 string constant pool에서 Hello라는 문자열을 검색하고 
+ 이미 존재하기 때문에 "Hello" 의 동일한 주소값을 반환하게 되어 true가 나오게 된다.
+`````
+
+ * String을 리터럴로 선언할 경우 내부적으로 String의 intern()메서드가 호출되게 된다. 
+ * intern() 메서드는 주어진 문자열이 string constant pool에 존재하는지 검색하고 있다면 그 주소값을 반환 하고,
+   없다면 string constant pool에 넣고 새로운 주소값을 반환한다.
+ 
 # Java 2-2
-### 메소드(Methods)
+## 메소드(Methods)
  * 객체가 하는 동작(행위)을 정의하는 작업을 수행하는 코드의 집합이자 나열
  * 코드의 중복을 방지, 유지보수성을 향상, 코드의 가독성을 개선하는 역할을 한다.
  
-#### 메소드의 구현
+### 메소드의 구현
    * 메소드는 함수의 형태로 구성된다.
      * 파라미터(Parameters,입력)
      * 실행문(Executional Statements)
@@ -240,7 +332,7 @@ class VariableTest{
      * 메소드가 호출될 때 마다 메소드 동작과 로컬 변수가 쌓이는 메소드 영역
      * 메소드가 종료될 때 메모리가 함께 반환됨.
      
-#### 메소드 오버로딩
+### 메소드 오버로딩
    * 동일 기능의 함수를 추가로 구현하는 방법
    * 입력 파라미터를 다르게 해서 동일한 함수명으로 구현한다.
    ````groovy
@@ -264,7 +356,20 @@ class VariableTest{
    System.out.println(Bar.sumAll(2,5,2,10,6,-2));
    System.out.println(Bar.sumAll(2.2f,0.2f,0.2f));
    ````
-### 생성자(Constructor)
+### 애노테이션(Annotation)
+* 재정의된 메소드라는 의미로 선언부가 기존의 메소드와 다른 경우 에러가 발생한다.(같게 해줘야 함)
+* 애노테이션은 컴파일러에게 특정한 정보를 제공해주는 역할을 한다
+  * (컴파일 오류를 막아주고, 컴파일러에게 정보를 전달해줌.)
+* 주로 사용되는 자바에서 제공되는 애노테이션
+
+| 애노테이션 | 설명 |
+| ---------| -----|
+| @Override | 재정의된 메소드라는 정보 제공|
+| @FuctionalInterface | 함수형 인터페이스라는 정보 제공|
+| @Deprecated | 이후 버전에서 사용되지 않을 수 있는 변수, 메서드에 사용됨|
+| @SupperessWarnings | 특정 경고가 나타나지 않도록 함 ex) @SupperessWarnings("deprecations")는 @Depreacted가 나타나지 않도록 함.|
+
+## 생성자(Constructor)
  * 클래스에서 인스턴스를 생성할 때 사용되는 메소드
    * new 키워들 이용해서 호출
    
@@ -314,7 +419,7 @@ class VariableTest{
      }
  }
  ````
-### this 키워드
+## this 키워드
   * 객체가 스스로를 가르키는 참조
   * 멤버 변수와 로컬 변수의 이름이 같을 때, 멤버 변수임을 명시
   * 생성자를 호출하는 데에도 사용할 수 있다.
@@ -349,7 +454,7 @@ class VariableTest{
        }
    }
   ````
-### Getter와 Setter
+## Getter와 Setter
   * 클래스의 멤버 변수를 간접적으로 다룰 수 있게 하는 메소드
   * 멤버 변수의 캡슐화를 구현하기 위해 사용. -> 정보은닉 / 보호
   * 멤버 변수의 값을 제한해야 할 때 유용.
@@ -399,7 +504,7 @@ class VariableTest{
        }
    }
   ````
-### 초기화 블록(Initializer)
+## 초기화 블록(Initializer)
  * 클래스 또는 인스턴스를 생성할 때 단 한번 실행되는 코드 블록
  ````java
  public class Main {

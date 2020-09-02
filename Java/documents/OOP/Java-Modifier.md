@@ -1,6 +1,6 @@
 #Java 2-3
-## 제어자(Modifier)
-### 제어자란
+# 제어자(Modifier)
+## 제어자란
 * 클래스, 변수, 메소드에 부가 기능을 부여하는 키워드
 * 접근 제어자 (Access modifiers)
    * 접근할 수 있는 범위를 정하는 키워드
@@ -15,7 +15,7 @@
 * 그 외 제어자 (Other modifiers)
    * 특별한 기능을 부여하는 제어자
    * static, final, abstract, synchronized
-#### 접근 제어자
+### 접근 제어자
 ````java
 ckage com.company.s04.p05.subp01;
 public class ClassA {
@@ -93,7 +93,60 @@ public class ClassB {
     }
 }
 ```` 
-#### 그 외의 제어자
+### public으로 open한거랑 private으로 닫아놓고 public method를 제공하는것의 차이
+* 2가지 차이점이 있다
+  1. getter를 할 수 있게하고, setter를 못하게(안하게) 하는 경우가 있다 (ReadOnly만 된다, 값을 넣을 수 없다, ID라던가 값이 변할 수 없는 고유한 값들)
+  2. 메소드에서 유효한 데이터를 핸들링 할 수 있다.
+     * boolean isValid 라는 멤버변수를 선언해주고 이것이 true일 때 올바른 날짜가 출력되게 하므로써 제한사항을 줄 수 있다
+     * 멤버변수이기 때문에 클래스 전체에서 사용이 가능하므로 (scope,범위가) 메소드에서 값을 변경하게 되면 멤버변수의 값이 변경되기 때문에
+ ```groovy
+     public class MyDate {
+         private int day;
+         private int month;
+         private int year;
+     
+         private boolean isVaild = true;
+     
+         public  void setDay(int day){
+             this.day = day;
+         }
+         public int getDay(){
+             return day;
+         }
+     
+         public int getMonth() {
+             return month;
+         }
+     
+         public void setMonth(int month) {
+             if(month <1 || month > 12){
+                 isVaild = false; // 값이 유효범위에 해당하는지 체크를 해준다.
+             }
+             this.month = month;
+         }
+     
+         public int getYear() {
+             return year;
+         }
+     
+         public void setYear(int year) {
+             this.year = year;
+         }
+     
+         public void showDate(){
+             if (isVaild){
+                 System.out.println(this.year + "년" + this.month + "월" +this.day+"일");
+             }else{
+                 System.out.println("유효하지 않은 범위 입니다.");
+             }
+     
+         }
+     
+     
+     }
+ ```
+
+### 그 외의 제어자
   * final 
   * - 더 이상 바꿀 수 없음을 의미 상수.
   * - 클래스, 메소드, 변수에 사용 가능
@@ -101,7 +154,7 @@ public class ClassB {
     * 메소드 : 자식 클래스에서 오버라이드 할 수 없다.
     * 변수 : 변수의 값이 초기화 이후에 변하지 않는다.
     * 생성자에서 초기화가 이루어지는 것을 blank final 변수라 한다.
-    ````
+   ````groovy
     public class Foo {
         final int x = 0; // final variable
         final int y; // blank finial variable
@@ -110,7 +163,7 @@ public class ClassB {
           this.y = y; // blank final variable initialization
       }
     }
-    ````
+   ````
   * static
     * 클래스 변수, 클래스 메소드 등을 선언하기 위해 사용
   * abstract
@@ -122,6 +175,7 @@ public class ClassB {
 # 싱글톤 패턴(Singletone)
  * 객체가 단 하나만 존재할 수 있는 클래스
  * private 생성자를 이용한다.
+ 
 ````java
 class SingletonClass {
   private static SingletoneClass instance = new SingletonClass();

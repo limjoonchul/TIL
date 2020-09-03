@@ -449,9 +449,11 @@ class VariableTest{
 
 
 ## this 키워드
-  * 객체가 스스로를 가르키는 참조
+  * 객체가 스스로를 가르키는 참조, 자신의 메모리를 가리킨다.
   * 멤버 변수와 로컬 변수의 이름이 같을 때, 멤버 변수임을 명시
   * 생성자를 호출하는 데에도 사용할 수 있다.
+    * 생성자 오버로딩에서 한 클래스 안에 생성자가 여러개 있을 수 있는데
+      한 생성자에서 다른 생성자를 호출하는 경우가 종종있다.
   * 반드시 생성자의 첫 줄에서만 사용해야 한다.
   ````java
    public class Constructor {
@@ -483,6 +485,86 @@ class VariableTest{
        }
    }
   ````
+* 인스턴스 자신의 주소를 반환할 일이 있으면 this를 반환 하면 된다.
+* day로부터 setYear라는 메소드를 호출하게 되면 setYear는 BirthDay에 대한 메소드이니깐
+* setYear의 세그멘테이션이 stack영역에 만들어지고 만약 setYear 안에서 this를 썼다하면 
+힙영역의 BirthDay에 대한 메모리를 가리킴 
+* 인스턴스 내부에서 객체 내부에서 자기 자신이 생성된 메모리주소를 가리킴
+* 인스턴스가 여러개 생성 됬다 하면, 각각의 this는 다 다름 코드상에서 this하나만 쓰지만 각각은 다 다름
+
+* 여기서 stack 영역에 this가 들어가게되는데 왜 this가 들어가는지 이해가 안갔는데
+메인에서 this가 date.setYear() 이런식으로 호출이 되어있다면 this는 date변수 대신이라고 생각해도 될까?
+* 로컬변수에 this는 참조변수로 생성된다. 그런 의미로 이해하면 될 것 같다
+ ```groovy
+public class MyDate {
+    private int day;
+    private int month;
+    private int year;
+
+    private boolean isVaild = true;
+
+//    public MyDate(int year, int month, int day) {
+//        this.year = year;
+//        this.month = month;
+//        this.day = day;
+//    }
+
+    public  void setDay(int day){
+        this.day = day;
+    }
+    public int getDay(){
+        return day;
+    }
+
+    public int getMonth() {
+        return month;
+    }
+
+    public void setMonth(int month) {
+        if(month <1 || month > 12){
+            isVaild = false;
+        }
+        this.month = month;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+
+    public void showDate(){
+        if (isVaild){
+            System.out.println(this.year + "년" + this.month + "월" +this.day+"일");
+        }else{
+            System.out.println("유효하지 않은 범위 입니다.");
+        }
+    }
+}
+
+    public class MyDateTest {
+        public static void main(String[] args) {
+            MyDate date = new MyDate();
+  
+            date.setYear(2019);
+            date.setMonth(13);
+            date.setDay(10);
+    
+            date.showDate();
+    
+    //        MyDate date2 = new MyDate();
+    //        date2.setYear(2020);
+    //        date2.setMonth(2);
+    //        date2.setDay(11);
+    //
+    //        date2.showDate();
+        }
+    }
+  ```
+
 ## Getter와 Setter
   * 클래스의 멤버 변수를 간접적으로 다룰 수 있게 하는 메소드
   * 멤버 변수의 캡슐화를 구현하기 위해 사용. -> 정보은닉 / 보호

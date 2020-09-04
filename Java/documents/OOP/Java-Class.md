@@ -238,7 +238,6 @@ class VariableTest{
      * 파라미터(Parameters,입력)
      * 실행문(Executional Statements)
      * 리턴 값(Return Value, 출력)
-     
    * 함수의 작성
    ````groovy
    // 인스턴스 메소드, 메소드 라고도 부름

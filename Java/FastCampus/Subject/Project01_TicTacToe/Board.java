@@ -17,6 +17,7 @@ public class Board implements Initailizable {
         initialize();
     }
 
+    // board를 '-'로 초기화 시킴
     @Override
     public void initialize() {
         for (int i = 0; i<board.length; i++){
@@ -26,6 +27,7 @@ public class Board implements Initailizable {
         }
     }
 
+    // board가 배열의 사이즈안에 들어가는지 체크해줌
     public boolean isPossible(Point move){
         if(move.getX() < 0 || move.getX() >=board.length){
             return false;
@@ -36,8 +38,11 @@ public class Board implements Initailizable {
         }
     }
 
+    // board가 범위안에 들어가서 사용가능하다면,
+    // board의 요소들을 입력받은 mark(o or x)로 초기화 시킴
+    // 메소드들을 대부분 boolean 타입으로 해뒀는데, 이유가 뭐지? 메인메소드를 다 구현해보고 다시 확인**
     // 파라미터로 좌표랑 mark('o','x')를 받고 또 if문에서 보안 값이 가능한 것인지 아닌지 체크를 해줌
-    // 조건문을 통과하면 board배열에 해당 x,y좌표에 mark를 넣어줌 근데 왜 여기서 x,y를 바꿔서 넣어주는지 이해 안감.
+    // 그래프의 형태처럼 x를 가로 y를 세로로 하기 위해서 x,y를 반대로 넣어줌.
     public boolean setMark(Point move, char mark){
         if(!isPossible(move)){
             return false;
@@ -63,7 +68,7 @@ public class Board implements Initailizable {
             return WinnerStatus.PLAYER_ONE;
         }else if(isMarkWin(MARKER_TWO)){
             return WinnerStatus.PLAYER_TWO;
-        }else if(isMarkFull()){
+        }else if(isMarkFull()){//빙고가 만들어지지 않았지만, 돌을 판에 다뒀을 경우 비김.
             return WinnerStatus.TIE;
         }else{
             return WinnerStatus.NOT_FINISHED;
@@ -83,6 +88,7 @@ public class Board implements Initailizable {
                 return true;
             }
         }
+        // foreach문 배열이 세번도니깐 세로로 각 배열의0번째 쭉돌고 1번째,2번째 쭉 돈다.
         for (int j =0; j<board[0].length; j++){
             int sum = 0;
             for (char[] chars : board){
@@ -96,9 +102,10 @@ public class Board implements Initailizable {
         int sum1 = 0;
         int sum2 = 0;
         for (int i =0; i< board.length; i++){
-            sum1 += board[i][i] == mark ? 1 : 0;
+            sum1 += board[i][i] == mark ? 1 : 0;// 왼쪽 위에서 오른쪽 아래로 대각선
             sum2 += board[i][board.length - 1 + i] == mark ? 1 : 0;
             // i가 0 1 2로 증가할 때 2 1 0 으로 감소하게 하기 위함.
+            //왼쪽 아래에서  오른쪽 위로 대각선 0일때 2, 1일 때 1, 2 일때 0 이렇게 됨.
         }
         return sum1 == board.length || sum2 == board.length;
     }

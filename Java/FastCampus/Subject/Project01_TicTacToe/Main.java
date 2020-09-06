@@ -19,6 +19,8 @@ public class Main {
 
         while(playerOne.getTotalWin() < N && playerTwo.getTotalWin() < N){
             Player player = Math.random() > 0.5 ? playerOne : playerTwo;
+            // 맨 처음 게임을 시작할 때 처음 시작하는 순서를 정하기 위한 코드
+            //0.0~ 0.9 까지나오는데 0.5보다크면 ONE, 작으면 TWO
             ticTacToe.initialize();
 
             System.out.printf("-- Current Score --");
@@ -27,6 +29,8 @@ public class Main {
             System.out.printf("-------------------");
 
 
+            //아직 게임이 끝나지 않았을 경우 현재 상태 보여주기.
+            //각 값이 넣을 때마다 현재상태를 보여준다고 생각하면 됨.
             while(ticTacToe.observe().getWinnerStatus() == Board.WinnerStatus.NOT_FINISHED){
                 System.out.println();
                 System.out.println("-- Current Board Stus --");

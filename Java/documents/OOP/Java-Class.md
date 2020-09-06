@@ -63,13 +63,13 @@
       * 초기화를 안해줬을 경우, 자동으로 자료형의 기본값으로 초기화 됨.(자동으로 초기화가 안이루어지는 경우도 있음.)
  
   ````groovy
-   static int classVar; 
-   // 클래스 멤버 변수, 스태틱 변수(정적 변수) 바로 메모리에 올라감.
-   
-   System.out.println("클래스 변수");
-   System.out.println(Variable.classVar); 
-   //0으로 초기화됨(외워야 됨 어떤변수들은 초기화가 안이뤄지는 경우도 있음)
-   ````
+     static int classVar; 
+     // 클래스 멤버 변수, 스태틱 변수(정적 변수) 바로 메모리에 올라감.
+          
+     System.out.println("클래스 변수");
+     System.out.println(Variable.classVar); 
+     //0으로 초기화됨(외워야 됨 어떤변수들은 초기화가 안이뤄지는 경우도 있음)
+   ````   
 2. 인스터스 멤버 변수(필드, 속성) 
    * 객체를 생성해서 사용하는 변수로 클래스명으로 접근이 불가능하다.
    * 초기화를 안해줬을 경우, 자료형의 기본값으로 자동 초기화 됨.
@@ -338,7 +338,6 @@ class VariableTest{
            //class method
      }
    }
-
    ````
    * 메소드 호출 스택 (Method Call Stack)
      * 메소드가 호출될 때 마다 메소드 동작과 로컬 변수가 쌓이는 메소드 영역

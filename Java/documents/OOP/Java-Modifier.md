@@ -17,7 +17,7 @@
    * static, final, abstract, synchronized
 ### 접근 제어자
 ````java
-ckage com.company.s04.p05.subp01;
+package com.company.s04.p05.subp01;
 public class ClassA {
     public  int x;
     protected  int y;

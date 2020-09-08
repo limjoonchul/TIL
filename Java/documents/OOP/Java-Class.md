@@ -493,6 +493,7 @@ class VariableTest{
 * 여기서 stack 영역에 this가 들어가게되는데 왜 this가 들어가는지 이해가 안갔는데
 메인에서 this가 date.setYear() 이런식으로 호출이 되어있다면 this는 date변수 대신이라고 생각해도 될까?
 * 로컬변수에 this는 참조변수로 생성된다. 그런 의미로 이해하면 될 것 같다
+
  ```groovy
 public class MyDate {
     private int day;

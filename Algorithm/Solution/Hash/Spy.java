@@ -35,15 +35,18 @@ public class Spy {
 
             int value = map.getOrDefault(key,1);
             //getOrDefault()는 처음봤지만, map에 해당 key가 저장이 되어 있는지 확인해서 없으면 defaultValue의 값을 대입한다.
-            // defaultValue를 1로해준이유는 뽑혀서 값을 대입할 때 사용되는 것과 같으니 1로 시작한다.
+            // defaultValue를 1로해준 이유는 뽑혔을 때 의상의 종류가 착용하지 않는 경우도 있어서 1로 default값을 준다.
             // 값이 있으면 그 key값의 value값을 대입한다.
 
             map.put(key,++value);
-            // 각 옷의 종류 중에서 안입는 경우의 수도 있기 때문에 먼저 증감 연산을 해서 값을 넣는다.
+            // 옷을 안입는 경우의수를 기본 1로 설정해줘서 값이 나왔을 때 거기다 증감연산을 먼저해서 값을 넣는다.
+            // 옷의 종류중에 똑같은 키값이 나오면 그값을 증가해서 값을 넣는다.
         }
         int answer = 1;
         for (int value: map.values()){ //map에 저장된 value값들을 반복하면서 하나씩 뽑늗다.
             // values()메소드는 처음 사용하는 것인데, map value값들이 저장되어있다고 생각하면 될 것같다.
+            // value()는 컬렉션을 반환하는데 향상된 포문을 이용하면 iterator을 이용해서 포문을 돌아준다.
+            // Map이여서 순서는 없지만 하나씩 접근을 해서 반환을 해준다.
             answer += value; // 뽑은 값을 answer에 더한다.
         }
         answer--;//위에서 말한 모든 종류의 옷을 안입는 경우의 수가 1번 생기니 전체에서 -1을 빼준다.

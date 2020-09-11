@@ -7,8 +7,8 @@ import java.util.*;
  * 모든 장르는 재생된 횟수가 다르다ㅣ. 장르를 소팅했을대 문제가생기지 않는다?
  * 장르가 나올때마다 플레이횟수 누적
  */
-
-class Node implements Comparable<Node> {
+// 장르랑 플레이횟수를 묶어주기 위해서 사용.
+class Node implements Comparable<Node> {//정렬을 해줘야하는데 기준을 만들어주기 위해서 Comparable인터페이스를 이용한다.
     String key;
     int value;
     int index;
@@ -23,8 +23,10 @@ class Node implements Comparable<Node> {
         this.value = value;
     }
     @Override
-    public int compareTo(Node o) {
-        return -Integer.compare(value, o.value);// 작은 값이 우선순위가 높으니깐? 모르겠다.
+    public int compareTo(Node o) {//Comparable 인터페이스를 구현 하면 compareTo 메소드를 구현해줄 수 있다
+        return -Integer.compare(value, o.value);
+        // -를 붙여준 이유는 기본적으로 오른차순으로 정렬이 이루어지는데
+        // 이건 플레이수가 큰 것부터 정렬하기 위해서 -를 붙여서 내림차순으로 정렬
     }
     public String toString() {
         return "(" + key + ", " + value + ", " + index + ")";
@@ -64,7 +66,14 @@ public class BestAlbum {
             sumList.add(new Node(entry.getKey(), entry.getValue()));
             // 새로운 리스트를 만들어서 sumMap에 있는 key와 valuef를 한 묶음으로 리스트에 넣어준다.
         }
-        Collections.sort(sumList);// 더 이Collection.sort()를 알아봐야하지만, value값을 기준으로 내림차순 정렬한다.
+        Collections.sort(sumList);
+        // 더 이Collection.sort()를 알아봐야하지만, value값을 기준으로 내림차순 정렬한다.
+        // Node 클래스에서 compareTo로 비교를 해줬기 때문에 정렬이 가능하다.
+        // Comparable 인터페이스에 comareTo()메소드가 정의되어 있는데
+        // 메소드를 오버라이딩해주면 Collections.sort()의 매개변수로 List를 넘겨서 정렬할 수 있다.
+        // List들이 자료형타입을 Node로 해줬기 때문에 Node 클래스에서 compareTo() 메소드를 재정의 한것에 대해서
+        // sort에 넘겨서 정렬할 수 있다. 정렬기준이 value인 것은 위에서 value값을 비교해줬기 때문이다.
+
         Collections.sort(list);// value값을 기준으로 내림차순 정렬한다.
 
         List<Integer> bests = new ArrayList<>(); //결과가 고유번호(인덱스)를 출력하는 것이므로 Integer로 자료형 타입을 정했다.

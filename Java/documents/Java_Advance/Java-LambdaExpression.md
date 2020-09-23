@@ -215,6 +215,337 @@ public class Main {
      }
  }
 ```
+## 표준 함수형 인터페이스
+* 자주 사용되는 함수형 인터페이스를 정의해 둔 API
+* Consumer, Supplier, Function, Operation, Predicate 계열이 있다.
 
+| 계열 |	입력 | 출력 |	메소드 |	설명 |
+| --- | --- | --- | ----- | ---- |
+| Consumer | O | X | void accept(T) | 입력을 소비 |
+| Supplier | X | O | T get() | 출력을 공급 |
+|Function|	O|	O|	T apply(R)|	입력 -> 출력 함수 매핑 |
+|Operation|	O|	O|	T apply(T)|	입력을 연산하여 동일 타입의 출력으로 리턴 |
+|Predicate|	O|	boolean| boolean test(T)| 입력을 판단 |
 
+### 표준 함수형 인터페이스의 종류
+#### Consumer 계열
+ * 파라미터 입력을 받아서 그것을 소비하는 Funtional Interface이다.
+   * 소비라는 것은 함수가 이용된다 라고 생각하면 된다. 리턴이 되지 않고
+    함수 내에서 사용이 되고 새로운 출력으로 되는게 아니고 없어진다.
+    그래서 소비라고 의미를 부여한 것이다.
+     
+| 인터페이스 | 메소드 |
+| -------- | ----- |
+| Consumer<T> |	void accept(T t) |
+| BiConsumer<T, U> | void accept(T t, U u) |
+| IntConsumer |	void accept(int value) |
+| LongConsumer | void accept(long value) |
+| DoubleConsumer | void accept(double value) |
+| ObjIntConsumer<T> | void accept(T t, int value) |
+| ObjLongConsumer<T> |	void accept(T t, long value) |
+| ObjDoubleConsumer<T> | void accept(T t, double value) |
+```groovy
+import java.util.function.*;
+
+public class Main {
+    public static void main(String[] args) {
+        Consumer<String> consumer = (s)-> System.out.println(s);
+        consumer.accept("A String.");
+
+        BiConsumer<String, String> biConsumer = (t,u) -> System.out.println(t+","+u);
+        biConsumer.accept("Hello","world");
+
+        // 오토박싱/ 언방식 사용하면 비효율적이다.
+        Consumer<Integer> integerConsumer = (x) -> System.out.println(x);
+        integerConsumer.accept(10); // 값이 들어갈 땐 오토박싱 출력할 때 언박싱
+
+        // 효율적으로 하기 위해서 IntConsumer 제네릭이 아니다 기본형 타입
+        // 기본형 입력을 하려고 할 경우, PConsumber (p: primitive type)을 사용 가능.
+        // 주의! 오버로딩이 아니고 별도의 인터페이스이다. 최적화를 위해서 불편하더라도 별도로 만들어 놓은 것이다.
+        IntConsumer intConsumer = (x) -> System.out.println(x);
+        intConsumer.accept(5); // 객체가 아니라 값을 입력을 받는 것이다. 기본자료형이니깐
+        //LongConsumer, DoubleConsumer
+
+        // t는 <>안에 값 x는 objIntconsumber의 int의 자료형이 들어간다.
+        ObjIntConsumer<String> objIntConsumer = (t,x) -> System.out.println(t + ": "+ x);
+        objIntConsumer.accept("x",1024);
+        // ObjLongConsumer,ObjDoubleConsumer
+        // 총 4가지 타입이 있다.
+    }
+}
+```
+#### Supplier 계열
+* 아무런 입력을 받지 않고, 값을 하나 반환하는 함수형 인터페이스이다.
+* 자료를 '공급'하는 공급자 역학을 한다.
+
+| 인터페이스 | 메소드 |
+| -------- | ----- |
+| Supplier<T> | T get() |
+| BooleanSupplier | boolean getAsBoolean() |
+| IntSupplier | int getAsInt() |
+| LongSupplier | long getAsLong() |
+| DoubleSupplier |	double getAsDouble() |
+
+```groovy
+import java.util.function.BooleanSupplier;
+import java.util.function.IntSupplier;
+import java.util.function.Supplier;
+
+public class Main {
+    public static void main(String[] args) {
+        Supplier<String> supplier = () -> "A String";//입력을 받지 않기때문에 ()이 필요하다.
+        System.out.println(supplier.get()); // get()을 해서 출력을 한다.
+        // BiSupperlier는 입력은 여러개할 수 있지만 출력은 하나밖에 못하기 때문에 없다.
+
+        //Supplier는 P Type 계엘에서 getAsP 메소드로 정의가 된다. primitive
+        // 메소드가 다르다. getAsInt()...
+        BooleanSupplier boolsup = () -> true;
+        System.out.println(boolsup.getAsBoolean()); // 이것은 getAsBoolean()으로 출력한다.
+        // IntSupplier, LongSupplier, DoubleSupplier
+
+        IntSupplier rollDice = () -> (int)(Math.random() * 6);
+        //0~6까지 나와서 6은 나오지 않음 0~5까지만 실제 값이 나온다.
+        for (int i = 0; i < 10; i++) {
+            System.out.println(rollDice.getAsInt());
+        }
+
+        int x = 4;
+        IntSupplier intSupp = () -> x; //로컬변수에도 접근할 수 있다.
+        // 람다식을 활용할 때 모든 변수에 접근하여 활용할 수 있다.
+        // 고정되어있는 값뿐만아니라ㅏ 동적으로도 주변 값들을 공급할 수 있다.
+        // 그래서 supplier가 나름대로의 의미가 있다??
+        System.out.println(intSupp.getAsInt());
+
+    }
+}
+```
+
+#### Funtion 계열
+* Mapping : 입력 ->  출력을 연결하는 함수형 인터페이스
+* 입력 타입과 출력 타입은 다를 수 있다.(다를 수 있다라는건 같을 수도 있다는 말도 된다.)
+
+| 인터페이스 | 메소드 |
+| -------- | ----- |
+| Function<T, R> |	R apply(T t) |
+| BiConsumer<T, U, R> |	R apply(T t, U u) |
+| PFunction<R> |	R apply(p value) |
+| PtoQFunction |	q applyAsQ(p value) |
+| ToPFunction<T> |	p applyAsP(T t) |
+| ToPBiFunction<T, U> |	p applyAsP(T t, U u) |
+
+* P, Q 는 기본 자료형(Primitive Type) : Int, Long, Double
+* p, q 는 기본 자료형(Primitive Type) : int, long, double
+
+```groovy
+import java.util.function.*;
+
+public class Main {
+    public static void main(String[] args) {
+        Function<String,Integer> func = (s) -> s.length();
+        // s 는 String타입, s.length() 는 Integer
+        System.out.println(func.apply("Strings")); //이것은 apply로 출력한다
+
+        // Bi가 붙으면 '입력'을 2개 받을 수 있다는 의미이다.
+        BiFunction<String,String,Integer> biFunction = (s,u) -> s.length() + u.length();
+        System.out.println(biFunction.apply("one","two")); //6
+
+        // IntFunction<R>은 리턴 자료형
+        // P type Funtion은 입력을 P타입으로 받는다.
+        IntFunction<String> intFunction = (value) -> String.valueOf(value);// "" + value도 가능.
+        System.out.println(intFunction.apply(512));
+
+        //ToP Type Function은 출력을 P타입으로 한다.
+        ToIntFunction<String> funcFour = (s) -> s.length(); // 4:21
+        System.out.println(funcFour.applyAsInt("abcde"));
+        // 출력이 P타입인 경우에는 AsP가 들어간다.!!!
+        //ToIntBiFunction<String,String>// int 출력을 하는 Bi 함수
+        // P: Int, Long, Double
+
+        // int 에서 double로 바꾸는 함수 PTOQFunction : P -> Q로 매핑하는 함수
+        IntToDoubleFunction funcfive;
+        // IntToIntFunction은 없다. 동일한 것에 대해서는 다른게 있다 4:23
+    }
+}
+```
+#### Operator 계열
+* 입력받은 타입과 동일한 타입의 출력을 하는 함수형 인터페이스
+* Funtion 계열과 달리 입출력 타입이 다를 수 없다.
+
+| 인터페이스 | 메소드 |
+| -------- | ----- |
+| UnaryOperator<T> | T apply(T t) |
+| BinaryOperator<T> | T apply(T t1, T t2) |
+| IntUnaryOperator | int applyAsInt(int value) |
+| LongUnaryOperator | long applyAsLong(long value) |
+| DoubleUnaryOperator |	double applyAsDouble(double value) |
+| IntBinaryOperator | int applyAsInt(int value1, int value2) |
+| LongBinaryOperator | long applyAsLong(long value, long value2) |
+| DoubleBinaryOperator | double applyAsDouble(double value, double value2) |
+
+```groovy
+import java.util.function.BinaryOperator;
+import java.util.function.IntBinaryOperator;
+import java.util.function.IntUnaryOperator;
+import java.util.function.UnaryOperator;
+
+public class Main {
+    public static void main(String[] args) {
+        // 그냥 operator는 없다.
+        //입력이 1개 인 것을 Unary를 붙여서 표현
+        UnaryOperator<String> operator = s -> s+"."; //리턴타입을 따로 입력받지 않는다 입출력이 같으니깐
+        System.out.println(operator.apply("왔다")); // apply() 사용.
+
+        BinaryOperator<String> operator1 = (s1,s2) -> s1 + s2;//타입은 하나만 입력받게 되어있다. 출력은 동일한 타입이여야 하니깐?
+        System.out.println(operator1.apply("나","왔다"));
+
+        IntUnaryOperator op = value -> value*10; //타입을 받지 않는다 어차피 int입력 int출력이니
+        System.out.println(op.applyAsInt(5));
+        // LongUnaryOperator, DoubleUnaryOperator
+
+        IntBinaryOperator ibo = (v1,v2) -> v1 * v2;
+        System.out.println(ibo.applyAsInt(10,20));
+        //LongBinaryOperator, DoubleBinaryOperator
+    }
+}
+```
+
+#### Predicate 계열
+* 논리 판단을 해주는 함수형 인터페이스
+* 입력을 받아서 boolean 타입 출력을 반환한다.
+
+| 인터페이스 | 메소드 |
+| -------- | ----- |
+| Predicate<T> | boolean test(T t) |
+| BiPredicate<T, U> | boolean test(T t, U u) |
+| IntPredicate | boolean test(int value) | 
+| LongPredicate | boolean test(long value) |
+| DoublePredicate | boolean test(double value) |
+
+```groovy
+import java.util.function.BiPredicate;
+import java.util.function.IntPredicate;
+import java.util.function.Predicate;
+
+public class Main {
+    public static void main(String[] args) {
+        Predicate<String> predicate = (s) -> s.length() == 4; // 조건식이 들어가야 한다.
+        System.out.println(predicate.test("Four")); // test()를 사용한다 true or false 값 출력
+        System.out.println(predicate.test("six"));
+
+        BiPredicate<String, Integer> pred2 = (s,v) -> s.length() ==v;
+        System.out.println(pred2.test("abcd",23));
+        System.out.println(pred2.test("abc",3));
+
+        IntPredicate pred3 = x -> x > 0;
+        //LongPredicate, DoublePredicate asP출력은 존재하지 않는다.
+
+    }
+}
+```
+
+### 표준 함수형 인터페이스의 메소드
+#### andThen(), compose()
+* 두 개 이상의 함수형 인터페이스를 연결하기 위해서 사용한다.
+  * `A.andThen(B)` : A를 먼저 실행하고 B를 실행, Consumer, Function, Operator 계열의 default method로 구현
+  ```groovy
+   Consumer<String> c0 = s -> System.out.println("c0 :" + s);
+   Consumer<String> c1 = s -> System.out.println("c1 :" + s);
+   Consumer<String> c2 = c0.andThen(c1);
+   c2.accept("String"); //동일한 스트링을 출력한다.
+  ```
+  
+  * `A.compose(B)` : B를 먼저 실행하고 A를 실행, Function, Operator 계열의 default method로 구현
+  ```groovy
+   // Function 계열은 입력->출력 ==> 입력-> 출력 타입이 연쇄 되어야 한다.
+   Function<String, Integer> func1 = s -> s.length();
+   Function<Integer, Long> func2 = value -> (long)value;
+   // func1의 입력이 String, 출력이 Integer이니깐, andThen()의 입력은 Integer여야 한다.
+   Function<String,Long> func3 = func1.andThen(func2);
+   System.out.println(func3.apply("four"));
+   
+   Function<String, Long> func4 = func2.compose(func1);
+   System.out.println(func4.apply("four"));
+  ```
+#### and(), or(), negeate(), isEual()
+* Predicate 계열의 기본 메소드
+  * and(), or(), negate()
+  * && , ||, ! 연산자의 동작을 한다.
+  ```groovy
+   // 객체에서 메소드로 접근한다.
+   DoublePredicate p0 = x -> x > 0.5;
+   DoublePredicate p1 = x -> x < 0.7;
+   DoublePredicate p2 = p0.and(p1);
+   DoublePredicate p3 = p0.or(p1); 
+   DoublePredicate p4 = p0.negate();
+   System.out.println(p0.test(0.9)); //true
+   System.out.println(p1.test(0.9)); // false
+   System.out.println(p2.test(0.9)); // false
+   System.out.println(p3.test(0.9)); // true
+   System.out.println(p4.test(0.9)); // false not p0
+  ```
+* Predicate 계열의 클래스 메소드
+  * isEqual()
+  ```groovy
+   Predicate<String> eq = Predicate.isEqual("String");
+   // 함수형 인터페이스를 사용할 수 있다. 람다식 사용 x
+   // 들어오는 String이랑 eq랑 같은지 테스트해주는 함수형 인터페이스를 리턴해줌
+   System.out.println(eq.test("String")); // true
+   System.out.println(eq.test("String!")); // false
+  ```
+#### minBy(), maxBy()
+* BinaryOperator 클래스의 클래스 메소드
+  * Comparator<T>를 파라미터로 받아 최소값/최대값을 구하는 BinaryOperator<T>를 리턴
+  ```groovy
+  public class Main {
+      public static void main(String[] args) {
+          BinaryOperator<String> minBy = BinaryOperator.minBy((o1,o2)-> o1.length() > o2.length() ? 1 : -1);
+          BinaryOperator<String> maxBy = BinaryOperator.maxBy((o1,o2)-> o1.length() > o2.length() ? 1 : -1);
           
+          // BinaryOperator.minBy((String o1,String o2)-> o1.length()+o2.length()); 이것도 가능
+          // 어떤걸 받아 줄건지 써줘야 한다.
+          // 앞에 String타입을 넣어주면 뒤에서 o1,o2가 String 이라는 것을 추론할 수 있다.
+  
+          System.out.println(minBy.apply("abc","cd")); // 더 작은게 출력됨
+          System.out.println(maxBy.apply("abc","cd")); // 더 큰게 출력됨
+          System.out.println(minBy.apply("abc","cde")); // abc가 출려됨
+      }
+  }
+  ```
+#### 람다식에 메소드/ 생성자 사용하는 예
+* 람다식에 기존에 구현되어 있는 내용을 재사용하고자 할 때 사용
+  * 함수형 인터페이스를 재사용하지 못하는 단점을 보완하기 위해서 사용한다.
+##### ClassName::instanceMethod
+* 첫번째 파라미터를 객체로, 두번째 파라미터를 메소드 입력으로 사용한다.
+```groovy
+String[] strings = { "A", "B", "D", "C" };
+Arrays.sort(strings, String::compareTo);
+```
+##### ClassName::classMethod
+* 클래스 메소드의 입력으로 모든 파라미터가 사용됨
+```groovy
+Function<String, Integer> parser = Integer::parseInt;
+```
+
+##### instance::instanceMethod
+* 주어진 객체의 메소드를 호출
+```groovy
+String string = "StringA";
+Predicate<String> pred = string::equals;
+System.out.println(pred.apply("StringA"));
+```
+
+##### ClassName::new
+* 생성자를 이용하여 객체를 생성하는 람다식
+```groovy
+IntFunction<String> func = String::new;
+String string = func.apply(10);
+```
+
+##### ClassName[]::new
+* 배열을 생성하는 람다식
+```groovy
+IntFunction<String[]> func = String[]::new;
+String [] strings = func.apply(100);
+```
+
+

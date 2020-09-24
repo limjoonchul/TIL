@@ -18,6 +18,7 @@
  * [ObjectClass](https://github.com/limjoonchul/TIL/blob/master/Java/documents/Java_Advance/Java-ObjectClass.md)
  * [CollectionFramework](https://github.com/limjoonchul/TIL/blob/master/Java/documents/Java_Advance/Java-CollectionFramework.md)
  * [LambdaExpression](https://github.com/limjoonchul/TIL/blob/master/Java/documents/Java_Advance/Java-LambdaExpression.md)
+ * [Stream API](https://github.com/limjoonchul/TIL/blob/master/Java/documents/Java_Advance/Java-StreamAPI.md)
 ### OOP
  * [What is OOP](https://github.com/limjoonchul/TIL/blob/master/Java/documents/OOP/Java-OOP.md)
  * [Class](https://github.com/limjoonchul/TIL/blob/master/Java/documents/OOP/Java-Class.md)

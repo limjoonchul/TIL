@@ -204,5 +204,6 @@ public class Main {
         // 수집 - Collection으로 변환하는 collect() 메소드
         // Stream API는 JCF을 STREAM으로 변환해서 처리하고 결과를 내는 것이다
         // 결과가 출력일 수도 있고 값일 수도 있고, 다시 컬렉션으로 만들고 싶을 수 있다.
+
     }
 }

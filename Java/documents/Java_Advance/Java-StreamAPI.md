@@ -245,9 +245,9 @@ System.out.println(list2.stream().flatMap(s -> {
    * 기본형 스트림의 통계 : count(), sum(), average(), min(), max()
    * T 타입 스트림의 통계 : count(), min(), max() (min, max의 경우 Comparator 필요)
 * reduce() 메소드 : 사용자 정의 집계 메소드
-  * Optional<T> reduce(BinaryOperator<T> accumulator) : accumulator를 수행하고 Optional<T> 타입 반환
-  * T reduce(T identity, BinaryOperator<T> accumulator) : identity를 초기값으로 하여, accumulator를 이용해 집계 연산
-  * <U> U reduce(U identity, BiFunction<U, ? super T, U> accumulator, BinaryOperator<U> combiner) : combiner를 이용해 병렬 스트림 결합
+  * `Optional<T> reduce(BinaryOperator<T> accumulator)` : accumulator를 수행하고 Optional<T> 타입 반환
+  * `T reduce(T identity, BinaryOperator<T> accumulator)` : identity를 초기값으로 하여, accumulator를 이용해 집계 연산
+  * `<U> U reduce(U identity, BiFunction<U, ? super T, U> accumulator, BinaryOperator<U> combiner)` : combiner를 이용해 병렬 스트림 결합
 
 ```groovy
 System.out.println(IntStream.range(0,10).reduce(0,(value1,value2)->value1+value2)); //sum()
@@ -278,5 +278,73 @@ System.out.println(IntStream.range(0,10).reduce(Integer.MAX_VALUE,(value1,value2
 * `Optional<T> findFirst()` : 스트림의 첫 요소 또는 empty Optional 객체를 반환
 * `Optional<T> findAny()` : 스트림의 아무 요소나 가지는 Optional 객체를 반환
 
+#### 수집
+##### 필요한 요소를 수집하여 새로운 Collection으로 구성하여 반환하는 메소드
+* collect()메소드
+  * `<R,A> R collect(Collector<? super T,A,R) collector)` : collector를 이용해 새로운 Collection R에 담아 반환
+     * Collectors의 정적 메소드 : toList(), toSet(), toCollection(), toMap(), toConcurrentMap()
+  * `<R, A> R collect(Supplier<R> supplier, BiConsumer<R, ? super T> accumulator, BiConsumer<R, R> combiner)` 
+  : supplier를 통해 공급된 컨테이너 R에 accumulator를 이용해 T값을 저장. 병렬처리 스트림에 사용될 경우 combiner를 이용해 스레드별 컨테이너 R을 통합
+    
+  ```groovy
+    String[] array = {"Java", "Is", "Fun", "Isn't", "It", "?"};
+    List<String> list = Arrays.stream(array)
+            .filter(s -> s.length() >= 3)
+            .collect(Collectors.toList()); // ArrayList
+            // .collect(Collectors.toCollection(LinkedList::new))
+    System.out.println(list.getClass().getName() + ":" + list);
+      
+    Set<String> set = Arrays.stream(array)
+            .filter(s -> s.length() >= 3)
+            .collect(Collectors.toSet()); // HashSet
+            // .collect(Collectors.toCollection(HashSet::new))
+    System.out.println(set.getClass().getName() + ":" + set);
+    
+    Map<String, Integer> map = Arrays.stream(array)
+            .filter(s -> s.length() >= 3)
+            .collect(Collectors.toMap(s -> s, String::length)); // HashMap
+            // .collect(Collectors.toCollection(s -> s, String::length, (oldVal, newVal) -> newVal, TreeMap::new))
+    System.out.println(map.getClass().getName() + map);
+   ```
+* Collectors의 정적 메소드를 이용한 그룹화와 분리
+   * `public static <T, K> Collector<T, ?, Map<K, List<T>>> groupingBy(Function<? super T, ? extends K> classifier)`
+    : classifier를 key값으로, 해당하는 값의 목록을 List인 value로 가지는 Map으로 스트림을 수집하는 Collector를 반환
+  
+      * `public static <T, K, A, D> Collector<T, ?, Map<K, D>> groupingBy(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream)` : List 대신 downstream collector로 수집
+  
+  * `public static <T> Collector<T, ?, Map<Boolean, List<T>>> partitioningBy(Predicate<? super T> predicate)` : predicate 결과를 key로, 해당하는 값의 목록을 List value로 가지는 Map으로 스트림을 수집하는 Collector를 반환
+       * `public static <T, A, D> Collector<T, ?, Map<Boolean, D>> partitioningBy(Predicate<? super T> predicate, Collector<? super T, A, D> downstream))` : List 대신 downstream collector로 수집
+  ```groovy
+   String[] array = {"Java", "Is", "Fun", "Isn't", "It", "?"};
+    
+    Map<Character, List<String>> map1 = Arrays.stream(array)
+            .collect(Collectors.groupingBy(s -> s.charAt(0)));
+    System.out.println(map1);
+    
+    Map<Boolean, List<String>> map2 = Arrays.stream(array)
+            .collect(Collectors.partitioningBy(s -> s.length() >= 3));
+    System.out.println(map2);
+  ```
+  
+ 
+* 집계를 위한 Collector
+  * Downstream collector로 집계를 위한 Collector를 사용할 경우 유용하다.
+  * counting(), summingP(), averagingP(), maxBy(), minBy(), reducing()
+  
+  ```groovy
+  String[] array = {"Java", "Is", "Fun", "Isn't", "It", "?"};
+    
+    Map<Character, Long> map = Arrays.stream(array)
+            .collect(Collectors.groupingBy(s -> s.charAt(0),
+                                           Collectors.counting()));
+    System.out.println(map);
+  ```
+### 병렬 스트림
+* 병렬 스트림의 생성
+  * stream() 대신 parallelStream()으로 변경
+  * stream 생성 후 parallel()으로 병렬화
+* combiner를 이용해 병렬 스트림으로 생성된 컬렉션을 결합
+  * BiConsumer<T, K> combiner : T 객체에 K 객체를 결합 
+    
     
     

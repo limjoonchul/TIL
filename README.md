@@ -15,7 +15,7 @@
 ### Java_Advance
  * [Wrapper Class](https://github.com/limjoonchul/TIL/blob/master/Java/documents/Java_Advance/Java-WrapperClass.md)
  * [예외처리(HandlingExceptions)](https://github.com/limjoonchul/TIL/blob/master/Java/documents/Java_Advance/Java-Handling_Exceptions.md)
- * [ObjectClass](https://github.com/limjoonchul/TIL/blob/master/Java/documents/Java_Advance/Java-ObjectClass.md)
+ * [Java.lang 패키지](https://github.com/limjoonchul/TIL/blob/master/Java/documents/Java_Advance/Java-Java_langPackage.md)
  * [CollectionFramework](https://github.com/limjoonchul/TIL/blob/master/Java/documents/Java_Advance/Java-CollectionFramework.md)
  * [LambdaExpression](https://github.com/limjoonchul/TIL/blob/master/Java/documents/Java_Advance/Java-LambdaExpression.md)
  * [Stream API](https://github.com/limjoonchul/TIL/blob/master/Java/documents/Java_Advance/Java-StreamAPI.md)

@@ -230,6 +230,18 @@ protected void finalize() throws Throwable {
 | public static final InputStream in |	표준 입력을 처리하기 위한 입력 스트림 |
 | public static final PrintStream out |	표준 출력을 처리하기 위한 출력 스트림 |
 
+* System.in / System.out
+```groovy
+System.out.println(System.out);// PrintStream 이라는 객체   의 클래스
+System.out.println(System.err);// PrintStream 이라는 객체   의 클래스
+System.out.println(System.in);// inputStream 이라는 객체 의 클래스 스트림 api랑은 다른 것이다!!!
+// Stream API와는 다른,  I/O Stream이다 전혀 연관이 없다!!!!!
+
+System.out.println("f"); // 표준 출력을 처리하기 위한 객체
+System.err.println("w"); // 요류를(표준 출력장치에) 출력하기 위한 객체 같은 객체여서 메소드가 같은게 있다.
+Scanner sc = new Scanner(System.in); // 표준 입력장치를 사용하기 위한 객체, 스캐너가 인풋스트림을 입력받게 되어있다.
+```
+
 * System 클래스의 주요 정적 메소드
 
   | 메소드 | 설명 |
@@ -256,10 +268,46 @@ protected void finalize() throws Throwable {
      | line.separator |	줄넘김 문자열 |
      | user.home |	유저 홈 경로 |
      | file.separator |	파일 경로 구분 |
-  
+     
+* arrayCopy() - 이것도 native로 구현되어 있다. 시스템에 구현되어있는게 native여서 이다. 
+OS적으로 최적화가 들어가 있다 그래서 for문 쓰는 것보다 효율적이다.
+```groovy
+int[] ints = {1,2,3,4};
+int[] ints1 = new int[10];
+System.arraycopy(ints,0,ints1,0,ints.length);
+```
+
+* currentTimeMills(), nanoTime() 시간에 관련된 것들
+```groovy
+System.out.println(System.currentTimeMillis()); //어떤 기준으로 밀리초마다 카운터하는게 있다
+System.out.println(System.currentTimeMillis()); // 두번연속 출력해도 차이가없다
+System.out.println(System.nanoTime()); // 어떤 기준으로 나노초마다 카운터하는게 있다. 0으로끝나있어서 1나노까지 정밀하게 구현되어있지 않다. 리얼타임오에스(RTOS)가 아니기대문에 정확하지 않을 수 있다.
+System.out.println(System.nanoTime());// 두번연속하면 차이가 생긴다.
+```
+
+* exit() / gc()
+```groovy
+System.exit(0);// 프로그램 강제 종료
+// status = 0 : 정상 종료를 의미 status!=0 : 비정상 종료(1을 많이씀)
+// Process finished with exit code 0 런타임했을 때 맨마지막에 나왔었던 것이다.
+
+System.gc(); // Garbage Collection  우리가 직접 실행해줄 필요는 없다. 다만 실행해주면 좀 더 원하는 타이밍에 빨리 동작하게 할 수 있다.
+
+System.out.println(System.getenv("JAVA_HOME")); // 내 피시에 있는 환경 변수들을 가져온다. 원하는 환경변수들을 가져올 수도 있다.
+// System이 os와 통신을 하는 것이기 때문에 가능하다.
+System.out.println(System.getProperties()); // 프로퍼티를 가져옴
+System.out.println(System.getProperty("user.country")); // 위치정보가 나온다 한국사람이다 영문인지 한국어인지 결정할 수 있다
+System.out.println(System.getProperty("java.io.tmpdir"));// 디렉토리를 나오게함
+System.out.println(System.getProperty("line.separator")); // window \r\n, unix \n
+System.out.println(System.getProperty("user.home"));
+System.out.println(System.getProperty("file.separator"));// window \ unix /
+```
+
 #### Math
 
 * 수학 계산에 필요한 메소드를 가진 final 클래스
+   * 상속을 할 수 없음(상속해서 구현해 봐야 기존 구현보다 나을리 없다. 뻘짓하지마라라는 의미이다~)
+* 모든 메소드가 static 메소드로 구현되어 있어서 그대로 사용하게 되어 있다
 
   | 메소드 |	설명 |
   | ----- | --- |
@@ -274,7 +322,44 @@ protected void finalize() throws Throwable {
   | subtractExact() | 뺄셈 연산으로, Overflow 발생 시 ArithmaticException 발생. |
   | multiplyExact() | 곱셈 연산으로, Overflow 발생 시 ArithmaticException 발생. |
 
-       
+```groovy
+System.out.println(Math.abs(-4)); // int long float double 오버라이딩
+System.out.println(Math.ceil(1.2)); //올림 연산 double 입력을 받고, 출력도 double -> 값의 범위때문에 오버플로우가 발생할 수 있다.
+
+System.out.println(Math.floor(1524.4));//내림 연산 double 입력, 출력도 double -> 값의 범위때문에 오버플로우가 발생할 수 있다.
+System.out.println(Math.max(4,2)); // 2개의 값만 비교하게 되어있다. -> java에서는 2개씩만 비교
+System.out.println(Math.min(4,2));
+System.out.println(Math.random()); // 0.0 이상, 1.0 미만의 값을 임의로 출력
+System.out.println(Math.round(1.4f)); // float -> int, double -> long
+```
+```groovy
+// 확률 표현
+int count=0;
+for (int i = 0; i < 1000; i++) {
+    if(Math.random() < 0.3) { //몬테카를로기법 확률상으로 30프로가 된다
+        count += 1;
+    }
+}
+System.out.println(count);
+
+// 랜덤한 정수
+int minVal = 2;
+int maxVal = 10;
+int randInt = (int)(Math.random() * (maxVal - minVal + 1) + minVal);
+System.out.println(randInt);
+
+
+System.out.println(Integer.MAX_VALUE+10); // 오버플로우가 발생하는것은 에러가아니고 특징이다.
+try{
+   System.out.println(Math.addExact(Integer.MAX_VALUE, 10));
+   System.out.println(Math.subtractExact(Integer.MAX_VALUE, -10));
+   System.out.println(Math.multiplyExact(Integer.MAX_VALUE, 4));
+}catch (ArithmeticException e){
+     e.printStackTrace();
+}
+System.out.println("end"); // 이게 먼저나오는게 ide의 버그이다.
+```
+ 
 ## Class 클래스
 * 자바의 모든 클래스와 인터페이스는 컴파일 후 class파일로 생성됨
 * class 파일에는 객체의 정보(멤버 변수, 메소드, 생성자 등) 가 포함되어 있음

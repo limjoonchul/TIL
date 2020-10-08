@@ -277,19 +277,102 @@ public class Main {
                             // writeBoolean, writeByte, writeShort.. writeUTF(String)
 
         // 윈도우는 /로 그냥 사용해도 상관없음
-        File src1 = new File("D:/Temp/MyTemp/data.dat");
-        // 5 :52
-        DataOutputStream out = new DataOutputStream(new FileOutputStream(src)); // 보조스트림을 만들어서 사용해야한다
-        out.writeUTF("자바왕");
-        out.writeInt(128);
-        out.writeFloat(523.411f);
+//        File src1 = new File("D:/Temp/MyTemp/data.dat");
+//        // 5 :52
+//        DataOutputStream out = new DataOutputStream(new FileOutputStream(src)); // 보조스트림이어서 메인스트림을 만들어서 사용해야한다.
+//        out.writeUTF("자바왕");
+//        out.writeInt(128);
+//        out.writeFloat(523.411f);
+//
+//        DataInputStream in = new DataInputStream(new FileInputStream(src));
+//        String  str = in.readUTF(); // 읽어올 때는 위에 쓴 순서대로 읽어와야한다 그렇지않으면 디코딩이 제대로 이뤄지지 않음
+//        int integer = in.readInt();
+//        float floatVal = in.readFloat();
+//
+//        System.out.println(str +" "+ integer + " "+floatVal);
 
-        DataInputStream in = new DataInputStream(new FileInputStream(src));
-        String  str = in.readUTF(); // 읽어올 때는 위에 쓴 순서대로 읽어와야한다 그렇지않으면 디코딩이 제대로 이뤄지지 않음
-        int integer = in.readInt();
-        float floatVal = in.readFloat();
+        // 객체 직렬화를 위한 인터페이스 - Serializable
+        // 객체 직렬화란 객체는 결국 힙영역에 내용이 써져있는 것이다. (객체의실체)
+        // 다만 이게 어떤 클래스인지 알고 있기 때문에 여기에 적혀 있는 내용이 어떤내용인가
+        // 즉 어떤 변수이고 이런것들을 알 수 있다.
+        // 객체 내용중에서 관심있는 내용들 출력을 이용해서 노드에 입력을 해줄 것인데
+        // 시리얼라이즈는 전체 내용을 입력하는게 아니라 관심있는 내용을 일자로 쭉 펴주는 것이다 --------- 이렇게
+        // 객체를 직렬로 만들어 저장하는것을 시리얼라이제이션,
+        // 반대로 힙에다가 풀어서 써줘야 한다. 풀어서쓰는것을 객체로 만들어주는 것을 디시리얼라이제이션
+        // 시리얼라이즈 할 수 있는 객체를 만든다.
+        // has-a 관걔에 있는 모든 객체도 시리얼라이즈해야만 가능하다.
 
-        System.out.println(str +" "+ integer + " "+floatVal);
+       class Foo implements Serializable{
+            static final long serialVersionUID = 1L; // 클래스 버전 관리
+           // FOO라고 만든 객체가 있을 때 겍체를 저장할 때 FOO의 내용이 바뀌어서
+           // 유저 아이디가 추가될 때 버전이 2L로 올라가는 자체적으로 버전관리를 할 수 있는 변수이다.
+           // 객체를 저장하라 때와 불러올 대 같은지 체크하여 serialVersionUID가 일치하지 않으면 실패
+           // 예를들어 변수의 순서가 바껴도 문제가 될 수있다 유저아이디와 유저네임의 순서가 바뀔 대도
+           // 코드의 변경이 있으면 UID를 변경시켜서 관리해줘야한다.
+
+           String userName;
+           int userID;
+           transient  String password; //패스워드는 저장되는걸 막아서 null 로출력
+           // Serialize에 포함하지 않음. (저장/불러오기 대상에서 제외되는 방식)
+
+           public Foo() {}
+           public Foo(String userName, int userID, String password) {
+               this.userName = userName;
+               this.userID = userID;
+               this.password = password;
+           }
+
+           @Override
+           public String toString(){
+               return userName + " " + userID + " " + password;
+           }
+
+        }
+
+        Foo foo = new Foo("Hansol-The-OutSider",
+                1423,"negazeilalnaga");
+        System.out.println(foo);
+        File dst1 = new File("C:/Temp/MyTemp/obj.data.txt");
+        try(ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(dst1));
+           ObjectInputStream in = new ObjectInputStream(new FileInputStream(dst1))){
+           out.writeObject(foo); //
+           Object read = in.readObject(); //return 타입이 object
+            if(read != null && read instanceof  Foo){ //Foo객체가 맞는지 안전하게 확인한다.
+                Foo readFoo = (Foo)read;
+                System.out.println(readFoo);
+            }
+        }catch (ClassNotFoundException e){
+
+        }
+        //3:43
+
+        // 부모클래스는 Serializable하지 않을 때,
+        // 자식클래스를 Serializable하게 구현하기
+        class ParentFoo{
+            int memVarOne;
+            double memVarTwo;
+        }// 부모는 serialzie되어이짔지 않기 대문에 outputstream에서 알아서 제외된다
+        // 그래서 직접 해줘야함
+        class ChildFoo extends ParentFoo implements Serializable{
+            int childMember;
+
+
+            private void writeObject(ObjectOutputStream out) throws  IOException{
+                out.writeInt(memVarOne);//부모 클래스를 시리얼라이즈하기 위해 써주는 것
+//                out.writeDouble(memVarTwo);
+                //  transient 대신 그냥 원하는 것만 쓰면 안쓴건 제외시킨다
+                out.defaultWriteObject(); //시리얼라이즈되어있는 자식클래스를
+                //3:52
+
+            }
+
+            private void readObject(ObjectInputStream in) throws  IOException,ClassNotFoundException{
+                memVarOne = in.readInt();
+//                memVarTwo = in.readDouble();
+                in.defaultReadObject();
+                // writer와 read순서 지켜줘야한다.
+            }
+        }
 
 
     }

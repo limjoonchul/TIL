@@ -282,7 +282,7 @@
 * 다른 스레드가 모두 종료될 경우, 스스로 종료되는 스레드 <- 정의
 * 무한 루프로 대기하면서 동작하는 구현이 많음 <- 활용
   * 일정 시간마다 동작, interrupt등에 의해서 동작, 외부의 요청에 의해서 동작하는 것
-* true로하면 데몬스레드가 된다.
+* setDaemon(true)로하면 데몬스레드가 된다.
 * 메인 스레드에서 종료되면 스스로 종료되는 데몬 설정
    ```java
    class AutoSaver extends Thread{
@@ -664,3 +664,130 @@
       }
   }
   ```
+## 스레드 풀(Thread pool)
+* 일반 스레드를 직접 만들어 사용할 경우, 작업을 마친 스레드는 종료된다.(1회용 이니깐)
+   * 멀티 스레들 작업을 계속 할 경우, 스레드를 생성 / 삭제하는 오버헤드가 있다.(속도가 떨어지고, 관리가 어렵다.)
+* 스레드 풀
+   * 미리 생성해 둔 스레드의 집합을 스레드 풀 이라고 한다.( 뭔가를 사용하기 위해 모아둔 것을 풀이라고 함)
+   * 미리 스레드를 생성해 두고, 작업만 스레드를 할당하여 동작한다.
+   * 배치 작업(모아두고 한번에 처리하는 작업)에 많이 사용.
+* 핵심! 미리 만들어 놓고 상황에 맞춰 동작하게 한다.
+
+### 스레드 풀 생성 방법
+* Executors 
+   * 실행하는 애들을 만들어 놓는 클래스
+   * ExecutorService 객체를 생성하며, 다음 메소드를 제공하여 쓰레드 풀을 개수 및 종류를 정할 수 있습니다.
+#### 1. newCachedThreadPool()
+* 필요할 때, 필요한 만큼 스레드 풀을 생성한다.
+* 초기 스레드가 0개 하나도 안돌아가고 있어서 오버헤드도 발생하지 않고 어떻게 동작할지 모르는 상태에서 무난하게 사용 가능
+* 코어 스레드가 0개 - 일하지 않아도 살려두는 스레드
+* 요청 작업보다 스레드가 부족하면 새 스레드를 생성한다.(작업에 맞춰 스레드를 생성)
+* 60초 동안  일하지 않은 스레드를 제거한다.
+* 안정적으로 사용할 때 사용!
+```groovy
+ExecutorService pool = Executors.newCachedThreadPool();
+```
+
+#### 2. newFixedThreadPool();
+* 인자 개수만큼의 고정된 스레드풀을 생성한다.
+* 최대 스레드 nThreads개
+* 코어 스레드 nThreads개 입력  값 개수
+* 요청 작업보다 스레드가 부족하면 새 스레드를 생성
+* 작업하지 않는 스레드도 제거하지 않고 동작한다.
+* 한번 증가하면 죽이지 않는다. 풀파워로 쓸 때 사용
+```groovy
+ExecutorService pool = Executors.newFixedThreadPool(10); // 입력받음
+```
+
+#### 3. new ThreadPoolExecutor()
+* corePoolsize, maximumPoolsize, keepAliveTime, TimeUnit, BlockingQueue를 인자로 받을 수 있다.
+   * corePoolsize : 코어 스레드의 개수
+   * maximumPoolsize : 최대 스레드 개수
+   * keepAliveTime : 스레드가 일하지 않을 때 제거하기 위한 대기 시간
+   * TimeUnit : 시간 단위를 지정
+   * BlockingQueue : 작업 요청이 오면 쌓아뒀다가 스레드 풀에 하나씩 할당해서 동작한다.
+      * 이게 없으면 작업 요청하면 실제 스레드로 들어가서 동작하기 전까지 메인 스레드가 멈춰 있어야 한다.
+       그래서 큐에 던져놓고 메인스레드는 동작하게 하는 것이다.(존재한다.)
+       
+```groovy
+ExecutorService es = new ThreadPoolExecutor(
+      10, // 코어 스레드 개수
+      100, // 최대 스레드 개수
+      120, // 스레드가 이 시간 동안 일하지 않으면 제거 (대기 시간)
+      TimeUnit.SECONDS, // 시간 단위를 지정
+      new SynchronousQueue<Runnable>() // 작업을 요청하면 -> 작업을 쌓아둘 큐 -> 스레드 풀로 할당해서 넘어가서 동작한다.
+      // 이게 없으면 작업 요청하면 실제 스레드로 들어가서 동작하기 전까지 메인 스레드가 멈춰있어야 한다. 그래서 큐에 던져 놓고
+      // 메인스레드는 동작하게 하는 것이다.(존재한다.)
+);
+```
+
+### 스레드 풀 동작 순서
+#### 1. 스레드 풀 생성
+```groovy
+ExecutorService pool1 = Executors.newCachedThreadPool();
+```
+
+#### 2. 스레드에 할당할 작업 생성
+````groovy
+class Work implements Runnable {
+    @Override
+    public void run() {
+        for (int i = 0; i < 100; i++) {
+            System.out.println(i);
+        }
+    }
+}
+
+class CallableWork implements Callable<String>{
+
+    @Override
+    public String call() throws Exception {
+        return "작업 종료";
+    }
+}
+````
+#### 3. 스레드에 작업 요청
+* sumbit() - 스레드를 실행는 메소드
+```groovy
+Future<String> future = null; 
+future = pool1.submit(new CallableWork());
+
+for (int i = 0; i < 100; i++) {
+    pool1.submit(new Work()); // 리턴이 있음
+    
+}
+```
+#### 4. 스레드 종료(동기화)
+* shutdown() - Thread.join()과 비슷하게 작업이 끝나기를 기다려서 종료
+   * 데몬 스레드가 아닌 이상 (일반 스레드는 )스레드 풀은 자동 종료가 안되기 때문에,직접 스레드 풀을 종료해 주어야 한다.
+* shutdownNow()는 바로 종료시키는 것
+* cancle() -  스레드를 종료시킬 때 사용하는 또 다른 메소드로 여기서는 실행중인 Callable 객체를 강제 종료할 수 있다. (mayInterruptIfRunning)안에 true, false 매개값을 줄 수 있다.
+   * true - 해당 스레드에 인터럽트를 보낸다, true를 주면 추가 기능이 생긴다.(false의 기능에서 더 추가된다.) 작업하는 스레드에 인터럽트를 걸어준다.
+   * false - false를 주고 cancle()을 호출하면 스레드는 아무 동작이 일어나지 않고.(종료하지 않음), get을 할 수 없게 된다.(CanclelationException 발생)
+* get() - Blocking Method로 CallableWork()의 객체의 작업이 다 끝나고 future로 값이 들어올 때까지 기다리다가 값이 들어오면 작업을 수행한다.
+   * 기다리기는 상황이 있기 때문에 Interrupt가 들어올 수 있다. 들어오면 InterruptException을 수행한다.
+   * Blocking Method이니깐 기다리는 상황일 때 계속 기다리기만 하는 상황이 생길 수 있어서 매개값으로 timeout을 설정할 수 있다.
+      * Blocking - 다른 작업이 기다릴 때가지 기다리는 것.
+* isCancelled() - cancle() 됬는지 확인할 때 사용하는 메소드
+* isDonle() - 작업이 잘 끝났는지 확인하는 메소드이다.
+* Callable가 어떻게 작업하는지 모르기때문에 외부에서 컨트롤할 수 있게 하기위해 위의 메소드들을 제공한다.
+```groovy
+pool1.shutdown(); // Thread.join()과 비슷하게 작업이 끝나기를 기다려서 종료
+
+Thread.sleep(1000);
+// 다른 스레드와 동기화를 맞추기 위해(여기서는 pool1이 작업을 진행중) 잠시 기다렸다가 밑에 코드가 진행되니깐 작업완료가 마지막에 출력됨!
+
+future.cancel(true);
+
+try {
+    System.out.println(future.get());
+    
+    future.isCancelled(); //캔슬 됬는지 확인
+    future.isDone(); // 작업이 잘 끝났는지 확인
+    
+} catch (InterruptedException e) {
+    e.printStackTrace();
+} catch (ExecutionException e) {
+    e.printStackTrace();
+}
+```

@@ -188,28 +188,28 @@ having language_count = 2;
 * language의 숫자 2개가놨는데 이게 2개 코리아랑 차이나 언어가 두개가 있을 수 있다고했을 때
 * 이 언어들을 출력해줄 때 사용한다. 
 ```roomsql
-select ct.name, max(ct.desity), count(cl.language) as language_count
-     , group_concat(cl.language) as language_list 
+select ct.name, max(ct.density) as density, count(cl.language) as language_count
+	, group_concat(cl.language) as language_list
 from (
-  select code, name , (population / surfacearea) as density
-  from country
-  having density>=200
+	select code, name, population / surfacearea as density
+	from country
+	having density >= 200
 ) as ct
 join countrylanguage as cl
 on ct.code = cl.countrycode
-group by city.name
+group by ct.name
 having language_count = 2;
+```
 
+#### 뷰로 만듬 
+```roomsql
 create view density as
 select code, name , round(population / surfacearea,2) as density
 from country
 having density>=200;
 
 select * from density;
-```
 
-#### 뷰로 만듬 
-```roomsql
 select ct.name, max(ct.desity), count(cl.language) as language_count
      , group_concat(cl.language) as language_list
 from density as ct

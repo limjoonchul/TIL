@@ -242,6 +242,7 @@
     * 방해를 의미하긴 하는데 컴퓨터 사이언스적인 용어로 기존 동작을 방해하고 반응을 강제하는 메소드.
     * 주로 임베디드에서 많이 사용. 별로 쓸일은 없다. 스레드 동작을 이해하는데 필요하다 잘 못 스립된 동작을 깨워준다.
     * 의도적으로 쓸 일은 많지 않다.
+    
     ```java
     public class Main {
         public static void main(String[] args) {           
@@ -316,9 +317,20 @@
        }
    }
    ```
-* 스레드의 종료
-  * `run()` 메소드의 종료
-  * `stop()` 메소드 호출 (deprecated)
+### 스레드의 안전한 종료 - stop 플래그, interrupt()
+* 겨웅에 따라서는 실행중인 스레드를 즉시 종료할 필요가 있다.
+* stop()메소드
+   * 즉시 종료시키지만 갑자기 종료하게 되면 사용중이던 자원들이 불안전하게 상태가 남겨진다 (deprecated)
+
+#### 안전한 종료방법
+* 방법 1. stop 플래그를 이용하는 방법
+   * stop플래그로 run()메소드의 정상 종료를 유도한다.
+* 방법 2. Interrupt() 메소드를 이용하는 방법
+   * 일시 정지 상태일 경우 InterruptedException을 발생시킨다.
+   * 실행대기 또는 실행상태에서는 InterruptedException이 발생하지 않는다.
+   * 일시 정지 상태로 만들지 않고 while문을 빠져나오는 방법
+boolean status = Thread.interrupted(); 사용됬다면 true, 아니면 false
+boolean status - objThread.isInterrupted();  
 
 ## 데몬 스레드(daemon thread)
 * 다른 스레드가 모두 종료될 경우, 스스로 종료되는 스레드 <- 정의
@@ -537,20 +549,7 @@
        }
    }
    ```
-### 스레드의 안전한 종료 - stop 플래그, interrupt()
-* 겨웅에 따라서는 실행중인 스레드를 즉시 종료할 필요가 있다.
-* stop()메소드
-   * 즉시 종료시키지만 갑자기 종료하게 되면 사용중이던 자원들이 불안전하게 상태가 남겨진다 (deprecated)
 
-#### 안전한 종료방법
-* 방법 1. stop 플래그를 이용하는 방법
-   * stop플래그로 run()메소드의 정상 종료를 유도한다.
-* 방법 2. Interrupt() 메소드를 이용하는 방법
-   * 일시 정지 상태일 경우 InterruptedException을 발생시킨다.
-   * 실행대기 또는 실행상태에서는 InterruptedException이 발생하지 않는다.
-   * 일시 정지 상태로 만들지 않고 while문을 빠져나오는 방법
-boolean status = Thread.interrupted(); 사용됬다면 true, 아니면 false
-boolean status - objThread.isInterrupted();  
 ### 공유 객체를 사용할 때의 주의할 점
 * 멀티 스레드가 하나의 객체를 공유하므로해서 생기는 오류
 calc객체의 memory 필드가 있다. user1 스레드와 user2 스레드가 calc이라는 객체를 공유할 때 

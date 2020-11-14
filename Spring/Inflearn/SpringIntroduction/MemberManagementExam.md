@@ -118,6 +118,7 @@ public class MemoryMemberRepository implements MemberRepository{
     @Override
     public Optional<Member> findById(Long id) {
         return Optional.ofNullable(store.get(id));
+        // 반환 값이 null일 수 있으니 Optional로 감쌈.
     }
 
     @Override
@@ -126,11 +127,14 @@ public class MemoryMemberRepository implements MemberRepository{
                 .filter(member -> member.getName().equals(name))
                 .findAny();
         // map을 끝까지 돌면서 찾으면 값을 반환하고, 없으면 optinal에 null이 포함되서 번환된다.
+        // findAny - 하나라도 찾는거 반환 값이 Optional
     }
 
     @Override
     public List<Member> findAll() {
-        return new ArrayList<>(store.values()); //위의 Map<Long,Member>가 있을 때, store.values가 Member이다.
+        return new ArrayList<>(store.values()); 
+        //위의 Map<Long,Member>가 있을 때, store.values가 Member이다.
+        // ArrayList를 생성할 때 Member들을 넣어준다 values()가 Member이니깐!!!!!
     }
 
     public void clearStore(){
@@ -179,7 +183,9 @@ public class MemoryMemberRepositoryTest {
 
         // then
         Member result = repository.findById(member.getId()).get();
-        // Optinal<Member> 로 되어있었기 때문에 반환값이 getId에 해당하는 Member객체가 반환
+        // Optional<Member> 로 되어있었기 때문에 get()을 사용해서 Optional을 벗겨낸 다음, 
+        // 반환값이 getId에 해당하는 Member객체가 반환
+
         System.out.println("result = " + (result == member));
         // Assertions.assertEquals(member, result);
         assertThat(member).isEqualTo(result);
@@ -252,15 +258,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-// @Service // 애노테이션을 써야지 스프링에서 인식하고 컨테이너에 등록해준다.
-@Transactional // 데이터를 저장하거나 변경할 때 transactional이 있어야 한다.
+
 public class MemberService { // 서비스 클래스는 좀 더 비즈니스 로직에 가까운 이름들을 사용해야 한다!!
     // 서비스는 비즈니스에 의존적으로 설계한다.
 
 //    private final MemberRepository memberRepository = new MemoryMemberRepository();
     private final MemberRepository memberRepository;
 
-    // @Autowired
+     // 이 부분이 제일 중요!!!!
     public MemberService(MemberRepository memberRepository) {
         this.memberRepository = memberRepository;
     }
@@ -347,12 +352,12 @@ class MemberServiceTest {
     MemoryMemberRepository memberRepository;
 //    MemoryMemberRepository memberRepository = new MemoryMemberRepository();
     // new로 객체를 생성했기 때문에 여기 있는 memberRepository랑 원래 MemberService 클래스의 memberRepository랑 다른 객체이게 된다.
-    // 이것이 좀 애매한 상황이 발생할 수 있는데 static Map<Long, Member> store = new HashMap<>();을 static으로 해놨기 때문에
+    // 이것이 좀 애매한 상황이 발생할 수 있는데 static Map<Long, Member> store = new HashMap<>();을 static으로 해놔서 클래스레벨에 붙기 때문에(클래스영역에 메모리 할당되는 그런 의미인듯.)
     // 문제가 안생기지만 static을 없애면 문제가 생긴다.
     // 그래서 이런 애매한 상황을 남기지 않기 위해서 MemberService 클래스에서 생성자를 만들어 MemoryMemberRepository 클래스의 객체를 입력받도록 만들었다!
 
     @BeforeEach // 메소드 실행이 전에 호출된다. 서로 영향이 없도록 항상 새로운 객체를 생성하고 의존관계도 새로 맺어진다.
-    public void beforeEach(){
+    public void beforeEach(){ // 이 부분이 중요!
         memberRepository = new MemoryMemberRepository();
         memberService = new MemberService(memberRepository);
     } // 이런 방법이 dependency injection 이다.

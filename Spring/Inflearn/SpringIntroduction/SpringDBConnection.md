@@ -238,3 +238,293 @@ public class SpringConfig {
 ![jdbcrepository](/Java/documents/images/jdbcrepositoryimage.png)
 
 ![스프링 컨테이너](/Java/documents/images/스프링컨테이너이미지.png)
+
+## 스프링 통합 테스트
+* `@SpringBootTest` : 스프링 컨테이너와 테스트를 함께 실행한다.
+* `@Transactional` : 테스트 케이스에 이 애노테이션이 있으면, 테스트 시작 전에 트랜잭션을 시작하고, 테스
+트 완료 후에 항상 롤백한다. 이렇게 하면 DB에 데이터가 남지 않으므로 다음 테스트에 영향을 주지 않는다.
+```java
+import hello.hellospring.domain.Member;
+import hello.hellospring.repository.MemberRepository;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+@SpringBootTest
+@Transactional
+
+class MemberServiceIntegrationTest {
+
+   @Autowired MemberService memberService;
+   @Autowired MemberRepository memberRepository;
+  
+   @Test
+   public void 회원가입() throws Exception {
+  
+      //Given
+       Member member = new Member();
+       member.setName("hello");
+      
+       //When
+       Long saveId = memberService.join(member); 
+      
+        //Then
+       Member findMember = memberRepository.findById(saveId).get();
+       assertEquals(member.getName(), findMember.getName());
+   }
+   @Test
+   public void 중복_회원_예외() throws Exception {
+        //Given
+        Member member1 = new Member();
+        member1.setName("spring");
+        Member member2 = new Member();
+        member2.setName("spring");
+
+        //When
+        memberService.join(member1);
+        IllegalStateException e = assertThrows(IllegalStateException.class,
+        () -> memberService.join(member2));//예외가 발생해야 한다.
+        assertThat(e.getMessage()).isEqualTo("이미 존재하는 회원입니다.");
+   }
+}
+``` 
+> 데이터베이스는 기본적으로 트랜잭션이라는 개념이 있다. DB에 데이터를 insert 쿼리를 해주면 커밋을 해줘야지 반영이 된다.
+> 무조건 커밋이 되는데, 오토커밋이냐 아니면 오토커밋이아니냐의 차인데 기본적으로 트랜잭션이라는 개념이 있어서 커밋을하기전에 반영이 안됨
+> 테스트 끝나고 Rollback 했을 때 db에 내용이 다 날라가고 반영이 안된다.
+> 이런 방법이 @Transactional 애노테이션을 다는 것이다.
+> 테스트를 실행할 때 트랜잭션을 먼저 실행하고 db에 인서트 쿼리를 하고 테스트가 끝나면 롤백을 해준다. 
+> db에 실제 데이터가 반영이 안되어있다 기존처럼 테스트를 지우지 않고 반복해서 실행할 수 있다.
+
+>순수하게 자바코드로 최소한의 단위로 테스트를 단위테스트라고 하고 스프링 컨테이너랑 DB연동하는 걸 통합테스트라고 한다.
+>순수한 단위 테스트일 때가 좋은 테스트일 확률이 높다 단위단위로 쪼개서 테스트를 잘 할수있도록하고
+>컨테이너없이 테스트할 수 있도록 해야한다 이런것이 좋은 테스트일 확률이 높다.
+
+## 스프링 JdbcTemplate
+* 순수 jdbc 와  환경설정을 하면 된다.
+* 스프링 jdbcTemplate 과  MyBatic같은 라이브러리는 JDBC API에서 본 반복 코드를 대부분 제거해준다.
+하지만  SQL은 직접 작성해야한다.(실무에서도 많이 사용한다.)
+* jdbc코드를 템플릿메소드 패턴을 다 써서 줄이고 줄인게 jdbcTemplate이다.
+이름이 template인 이유는 여러가지가 있겠지만, template 메소드 패턴을 많이 사용해서 줄였기 때문이다.
+
+* 생성자가 하나일 때 @Autowired를 생략할 수 있다.
+작은 버그하나가 큰 손실이 되니깐  테스트케이스를 잘 짜는게 중요하다. 
+
+* SimpleJdbcInsert - 테이블명과 PK만 있으면 INSERT를 할 수 있어서 쿼리를 알아서 만들어줘서 쿼리를 짤 필요가 없다. 
+```groovy
+SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate); // JdbcTemplate을 넘겨서 만든다
+jdbcInsert.withTableName("member").usingGeneratedKeyColumns("id");
+
+Map<String, Object> parameters = new HashMap<>();
+parameters.put("name", member.getName());
+```
+
+## JPA
+* JPA를 사용하면 기존의 반복 코드는 물론이고, 기본적인 SQL도 JPA가 직접 만들어서 실행해준다.
+* 객체를 JAP에 넣으면 DB에 SQL을 날리고 데이터를 가져오는 걸 알아서 처리해준다.
+* JPA를 사용하면, SQL 과 데이터 중심의 설계에서 객체 중심의 설계로 패러다임을 전환할 수 있다.
+* JPA를 사용하면 개발 생산성을 크게 높일 수 있다.
+
+* JPA는 인터페이스이다. 인터페이스만 제공한다. 
+* 구현체로 hibernate, 이클립스 구현기술 벤더들이 있는데 jpa의 hibernate만 거의 쓴다.
+* jpa는 자바 진형의 표준 인터페이스이고 구현은 여러 업체가 하는 것이다.
+* JPA는 객체와 ORM(Object Relational Mapping)이라는 기술이다. 
+   * 라이브러리를 받으면 스프링 부트가 자동으로 EntitiyManger를 생성해준다.
+* ORM - 객체와 관계형데이터베이스를 매핑해주는 기술
+### build.gradle 파일에 JAP, h2 데이터베이스 관려 ㄴ라이브러리 추가
+* `implementation 'org.springframework.boot:spring-boot-starter-data-jpa`를 추가하면 된다
+   * jdbc관련 라이브러리도 포함한다.
+
+### 스프링 부트 JAP 설정 추가 
+* application.properties에 spring.jpa.hibernate.ddl-auto=none;를 추가하면 회원 객체를 보고 테이블을 다 만든다.
+우리는 이미 테이블을 만들어놨기 때문에 여기서 none으로 설정해 놨다.
+* Show-sql - JPA가 생성하는 SQL를 출력한다.
+
+
+### JPA 엔티티 매핑
+* DB에 값을 넣으면 DB에서 Id값을 자동으로 생성해주는 것을 identity전략이라고한다.
+* JPA는 EntityManger로 모든 동작을 한다. 
+* build.gralde에 `implementation 'org.springframework.boot:spring-boot-starter-data-jpa'`
+이걸해서 라이브러리를 다운 받으면 스프링부트가 알아서 데이터베이스와 연결을 다해서 EntityManger를 생성해준다. 
+그래서 이 만들어준 걸 인젝션 받으면 된다.
+
+```java
+package hello.springexample.domain;
+
+import javax.persistence.*;
+
+@Entity // 이걸 써주면 JPA가 관리하는 엔티티이다.
+public class Member {
+
+    @Id // PrimaryKey
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
+
+    private String name;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+```
+### JPA 회원 리포지토리
+```java
+package hello.springexample.repository;
+
+import hello.springexample.domain.Member;
+
+import javax.persistence.EntityManager;
+import java.util.List;
+import java.util.Optional;
+import java.util.OptionalInt;
+
+public class JpaMemberRepository implements MemberRepository{
+
+    private final EntityManager em;
+
+    public JpaMemberRepository(EntityManager em) {
+        this.em = em;
+    }
+
+    @Override
+    public Member save(Member member) {
+        em.persist(member); // 이렇게하면 jpa가 인서트쿼리를 다해주고 setid까지 다해서 만들어준다.
+        return member;
+    }
+
+    @Override
+    public Optional<Member> findById(Long id) {
+        Member member = em.find(Member.class, id);// 조회는 이렇게 한다 조회할 타입, 식별자를 넣어주면 된다.
+        return Optional.ofNullable(member);
+    }
+
+    @Override
+    public Optional<Member> findByName(String name) {
+        List<Member> result = em.createQuery("select m from Member m where m.name = :name", Member.class)
+                .setParameter("name", name)
+                .getResultList();
+        return result.stream().findAny();
+    }
+
+    @Override
+    public List<Member> findAll() {
+        return em.createQuery("select m from Member m", Member.class)
+                .getResultList();
+        // JPQL이라는 쿼리언어 객체를 대상으로 쿼리를 날린다? select 할때 m으로 주는데 이건
+        // 객체 자체를 select하는 것이다.
+        // Member.class 조회할 객체를 써준다.
+    }
+}
+```
+### MemberServiec에 트랜잭션 추가
+* org.springframework.transaction.annotation.Transactional 를 사용하자.
+* 스프링은 해당 클래스의 메서드를 실행할 때 트랜잭션을 시작하고, 메서드가 정상 종료되면 트랜잭션을 커밋한다. 만약 런타임 예외가 발생하면 롤백한다.
+* JPA를 통한 모든 데이터 변경은 트랜잭션 안에서 실행해야 한다
+```java
+@Transactional // 데이터를 저장하거나 변경할 때 이게 항상 있어야 한다.
+// jpa는 join들어올대 모든 데이터변경이 트랜잭션 안에서 실행이 되야 한다.
+public class MemberService {
+    ...
+}
+```
+
+## 데이터 JPA
+* 단순하고 반복적인 개발 코드를 확연하게 줄여주고, 개발자는 핵심 비즈니스 로직을 개발하는데 집중할 수 있다.
+  * 실무에서 관계형 데이터베이스를 사용한다면 스프링 데이터 JPA는 이제 선택이 아닌 필수 이다.
+* 관계형 데이터베이스를 사용한다면 스프링 데이터 JPA는 필수적이다.
+* 주의 : 스프링 데이터 JPA는 JPA를 편리하게 사용하도록 도와주는 기술이다. 
+  * 따라서 JPA를 먼저 학습한 후에 스프링 데이터 JPA를 학습해야 한다.
+
+### 스프링 데이터 JPA 회원 리포지토리
+* 스프링 데이터 JPA가 SpringDataJpaMemberRepository가
+*  구현체를 알아서 만들어주고 스프링 빈에 자동 등록해준다.
+* JpaRepository를 상속 받고 있으면 내부에 save, find 이런게 다 구현이 되어있어서 기본메소드를 제공한다.
+
+*  다른것들은 기본적으로 제공되는 메소드이지만, 이 이름을 조회하는것은 서비스하는 회시마다 다를 수 있으므로 공통으로 제공할수 없다 그래서 따로 오버라이드를 해줘야한다.
+```java
+package hello.springexample.repository;
+
+import hello.springexample.domain.Member;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Optional;
+
+
+public interface SpringDataJpaMemberRepository extends JpaRepository<Member,Long>, MemberRepository{
+
+    // select m from Member m where m.name = ? 으로 jpql를 짠다.
+    @Override
+    Optional<Member> findByName(String name);
+
+}
+
+```
+
+### 스프링 설정 변경
+* 데이터 JPA를 사용하면 알아서 객체를 만들어서 빈에 등록해주므로 따로 전에 했던 방식들처럼 빈을 만들 필요가 없다.
+
+```java
+package hello.springexample;
+
+import hello.springexample.repository.MemberRepository;
+import hello.springexample.service.MemberService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class SpringConfig {
+
+    // 데이터 JPA할 때 사용.
+    private final MemberRepository memberRepository;
+
+    @Autowired
+    public SpringConfig(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
+
+    @Bean
+    public MemberService memberService(){
+        return new MemberService(memberRepository);
+    }
+
+    // 데이터 JPA를 사용하면 이걸 사용할 필요가 없다.
+//    @Bean
+//    public MemberRepository memberRepository(){
+//        return new MemoryMemberRepository();
+//        return new JdbcMemberRepository(dataSource);
+//        return new JdbcTemplateMemberRepository(dataSource);
+        // 연결정보가 들어있는 datasource를 넣어줘야 한다.
+//        return new JpaMemberRepository(em);
+//    }
+}
+```
+
+### 스프링 데이터 JPA 제공 기능
+* 인터페이스를 통한 기본적인 CRUD
+* `findByName()` , `findByEmail()` 처럼 메서드 이름 만으로 조회 기능 제공
+* 페이징 기능 자동 제공
+
+![데이터JPA](/Java/documents/images/데이터JPA제공클래스.png)
+
+
+
+

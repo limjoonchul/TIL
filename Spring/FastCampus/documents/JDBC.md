@@ -294,3 +294,532 @@ try{
 * 커넥션은 커넥션 statement, resultset 순으로해서 close()를 할 때도 역순으로 닫아야 한다.
 * 등록 수정 삭제는 resultset을 사용하지 않기 때문에 stmt, conn만 닫아주면 된다.
 
+### PreparedStatement
+* Statement보다 SQL처리 속도가 5배 이상 빨라서 이걸 사용 하면 된다.
+* DB에서 SQL이 들어올 때 가장 먼저 확인하는 것이 문법체크와 오브젝트를 확인하는 것이다.
+SQL이 들어올 때마다 이러한 작업들을 계속해서 수행해야 하나는데 `PreparedStatement`를 사용 하게 되면
+한 번 SQL을 사용해서 보내 놓으면 그 다음부터는 문법체크와 오브젝트 확인에 대한 작업들을 실행하지 않는다.
+그래서 일단 ?로 값을 채워 넣고 동적으로 setXXX()를 사용하여 값을 넣어서 사용할 수 있다.
+문법체크와 오브젝트를 확인하는 일에 대해서 한번 이후에 계속해서 실행시키지 않기 때문에
+속도가 더 빠른 것이다. 
+
+* Statement와 차이점
+  * `String sql = "select * from users where id = ? and password = ?";` - 파라미터를 ?로 작성한다.
+  * `stmt = conn.prepareStatement(sql);` - 여기서 ()안에 sql을 넣어줘야 한다.
+  * `stmt.setString(1, "admin")`, `stmt.setString(2, "admin")` - 파라미터 ? 에 순서대로 1,2 번호를 넣고 해당하는 값을 넣는다.
+  * `rs = stmt.executeQuery();` - sql을 빼고 작성하면 된다.
+    			
+```java
+package com.rubypapper.biz.user;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import org.h2.util.JdbcUtils;
+
+import com.rubypapper.biz.common.JDBCUtil;
+
+public class GetUserTest {
+	public static void main(String[] args) {
+		// JDBC API 선언
+		Connection conn = null; // 고속도로
+//		Statement stmt = null; // 자동차 
+		PreparedStatement stmt = null; // 자동차(페라리) statement보다 sql처리속도가 5배 이상 빠르다. 무조건 써라.
+		ResultSet rs = null; // 검색 결과 저장
+		
+		
+		try {
+			// 2.Connection 객체를 획득한다.
+			conn = JDBCUtil.getConnection(); // static 메소드니깐 바로 접근이 가능하다.
+			
+			// 3. Statement 객체를 획득한다.
+			String sql = "select * from users where id = ? and password = ?";
+			stmt = conn.prepareStatement(sql);// 프리페얼드는 여기에 sql이 들어감 그리고 파라미터가 ?로 바뀐다. exe여기에 sql이 빠짐
+			
+			// ? 파라미터에 값  설정
+			stmt.setString(1, "admin");
+			stmt.setString(2, "admin");  // 결과가 달라지는게 아니라 성능이 더 좋아진다.
+			
+			// 4. SQL 구문을 DB에 전송한다.
+			
+			rs = stmt.executeQuery();
+			
+			// 5. 검색 결과 처리
+			if(rs.next()) {
+				System.out.println("아이디 : " + rs.getString("ID"));
+				System.out.println("비번 : " + rs.getString("PASSWORD"));
+				System.out.println("이름 : " + rs.getString("NAME"));
+				System.out.println("권한 : " + rs.getString("ROLE"));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			JDBCUtil.close(rs, stmt, conn);
+		}
+	}
+}
+```
+
+## Refactoring
+* 처음엔 정말 그대로 각 클래스에서 기능을 처리하도록 만들었었는데, 이렇게 작성했을 때 유지보수성이 안좋았다.
+그래서 다음으로 JDBCUtil로 공통적으로 사용하는 코드들을 새로운 클래스에 만들어서 호출하는 방식으로 해서 유지보수성을 높였는데,
+거기서 더 나아가서 데이터베이스에 접근할 수 있는 DAO 클래스와 전달되는 객체 VO를 만들어서 한 번더 리팩토링을 했다.
+* 순서대로 Refactoring 해가는 과정 코드들을 적었다.
+
+### 1. JDBCUtil 클래스를 만들어서 리팩토링 
+* InsertBoardTest 클래스
+```java
+package com.rubypapper.biz.board;
+
+public class InertBoardTest {
+
+	public static void main(String[] args) {
+		Connection conn = null; PreparedStatement stmt = null;
+        		  
+        try {
+         // JDBUCUtil에 1,2 번 과정이 들어가있어서 호출해서 사용.
+         conn = JDBCUtil.getConnection();
+        
+        // 3. SQL 전달 객체를 생성한다.
+        // String sql = "insert into board(seq, title, writer, content) values((select nvl(max(seq), 0) + 1 from board), ?, ?, ?)";
+        stmt = conn.prepareStatement(sql);
+        
+        // 파라미터 세팅 stmt.setString(1, "JDBC 제목 "); stmt.setString(2, "테스터");
+        stmt.setString(3, "JDBC 내용...");
+        
+        // 4. SQL 전송        
+        int cnt = stmt.executeUpdate(); 
+        System.out.println(cnt + "건의 데이터 처리 성공!");
+        
+        } catch (Exception e) { 
+          e.printStackTrace();
+        
+        } finally { 
+          JDBCUtil.close(stmt, conn); 
+        }		
+	}
+}
+```
+* JDBCUtil 클래스
+```java
+package com.rubypapper.biz.common;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class JDBCUtil {
+
+	// 자원 연결
+	public static Connection getConnection() {
+		try {
+			// 1. 드라이버 객체를 메모리에 로딩한다.
+			Class.forName("org.h2.Driver");
+			
+			// 2.Connection 객체를 획득한다.
+			return DriverManager.getConnection("jdbc:h2:tcp://localhost/~/test","sa","");
+		} catch (ClassNotFoundException e) {			
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+			
+		return null;
+	}
+
+	// select 기능의 자원 해제
+	public static void close(ResultSet rs, PreparedStatement stmt, Connection conn) {
+		// 6. Connection 연결 해제 close 순서 ResultSet-> Statement -> Connection
+		   try{
+             if(rs != null)
+                 rs.close();
+         }catch (SQLException e){
+             e.printStackTrace();
+         }finally {
+             rs = null;
+         }
+
+         try{
+
+             if(stmt != null)
+                 stmt.close();
+         }catch (SQLException e){
+             e.printStackTrace();
+         }finally {
+             stmt = null;
+         }
+
+         try{
+
+             if(!conn.isClosed() && conn != null) // 커넥션이 닫힌게 아니라면 이조건을 실행해라.
+                 conn.close();
+         }catch (SQLException e){
+             e.printStackTrace();
+         }finally {
+             conn = null;
+         }
+		
+	}
+	
+	
+	// select외의 기능의 자원 해제
+		public static void close(PreparedStatement stmt, Connection conn) {
+			// 6. Connection 연결 해제 close 순서 Statement -> Connection
+
+	         try{
+
+	             if(stmt != null)
+	                 stmt.close();
+	         }catch (SQLException e){
+	             e.printStackTrace();
+	         }finally {
+	             stmt = null;
+	         }
+
+	         try{
+
+	             if(!conn.isClosed() && conn != null) // 커넥션이 닫힌게 아니라면 이조건을 실행해라.
+	                 conn.close();
+	         }catch (SQLException e){
+	             e.printStackTrace();
+	         }finally {
+	             conn = null;
+	         }
+			
+		}
+}
+```
+
+### DAO, VO를 이용한 리팩토링
+* 만약 인서트쿼리를 처리하고 하고 바로 조회를 하거나, 업데이트를 하고 바로 조회를 할려고 구현을 할 때
+그냥 코드를 직접 넣으면 코드가 길어지고 지저분해 보이게 되고, JDBCUtil을 사용해도 번거로워지는 부분이 생긴다. 이 때 DAO를 만들면 된다.
+* boardDao만 작성 했을 때 문제점 
+  * 문제1. 처음 볼 때 들어가는 값이 제목인지 컨텐트인지 모른다. 이 메소드를 들어가봐야 의미를 파악할 수 있다.
+  * 문제2. 파라미터의 타입과 순서만 맞으면 데이터가 잘 못 입력되어도 들어가게 된다. 
+  * 에러가 뜨고 컴파일 오류가 뜨면 다행인데 안뜨고 잘 못 들어가면 문제가 된다.
+  * 그래서 VO도 함께 만들어서 데이터를 처리하면 된다.
+```java
+package com.rubypapper.biz.board;
+
+public class InertBoardTest {
+
+	public static void main(String[] args) {
+		
+		// 1. 글 등록 기능 처리
+		BoardDAO boardDAO = new BoardDAO();
+		
+		BoardVO vo = new BoardVO();
+		vo.setTitle("VO 테스트");
+		vo.setTitle("테스터");
+		vo.setTitle("VO 내용.....");
+		
+		boardDAO.insertBoard(vo); 
+
+		// 2. 글 목록 검색 기능 처리
+		boardDAO.getBoardList();
+	}
+}
+```
+* DAO
+```java
+package com.rubypapper.biz.board;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.rubypapper.biz.common.JDBCUtil;
+
+// DAO(Data Access Object) 클래스
+public class BoardDAO {
+	// JDBC 관련 변수 선언
+	
+	private Connection conn;
+	private PreparedStatement stmt;
+	private ResultSet rs;
+	
+	// BOARD 테이블 관련 SQL 명령어
+	private static final String BOARD_INSERT = "INSERT INTO BOARD(SEQ, TITLE, WRITER, CONTENT) VALUES((SELECT NVL(MAX(SEQ),0)  + 1 FROM BOARD), ?, ?, ?)";
+	private static final String BOARD_UPDATE = "UPDATE BOARD SET TITLE=?, CONTENT=? WHERE SEQ=?";
+	private static final String BOARD_DELETE = "DELETE BOARD WHERE SEQ=?";
+	private static final String BOARD_GET = "SELECT * FROM BOARD WHERE SEQ=?";
+	private static final String BOARD_LIST = "SELECT * FROM BOARD ORDER BY SEQ DESC";
+	
+	// BOARD 테이블 관련 CRUD 기능의 메소드
+	// 글 등록
+	public void insertBoard(BoardVO vo) {
+		try {
+			conn = JDBCUtil.getConnection();
+			stmt = conn.prepareStatement(BOARD_INSERT); // sql이 완성되지 않았다 ?로 넣었기 때문에.
+			
+			stmt.setString(1, vo.getTitle()); // sql 세팅 값을 넣어줌.
+			stmt.setString(2, vo.getWriter());
+			stmt.setString(3, vo.getContent());
+			
+//			stmt.setString(1, title); // sql 세팅 값을 넣어줌.
+//			stmt.setString(2, writer);
+//			stmt.setString(3, content);
+			
+			stmt.executeUpdate();
+		}catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			JDBCUtil.close(stmt, conn);
+		}
+	}
+	
+	// 글 수정
+	public void updateBoard(BoardVO vo) {
+		try {
+			conn = JDBCUtil.getConnection();
+			stmt = conn.prepareStatement(BOARD_UPDATE);
+			
+			stmt.setString(1, vo.getTitle()); // sql 세팅 값을 넣어줌.
+			stmt.setString(2, vo.getWriter());
+			stmt.setString(3, vo.getContent());
+			
+//			stmt.setString(1, title); // sql 세팅 값을 넣어줌.
+//			stmt.setString(2, content);
+//			stmt.setInt(3, seq);
+			
+			
+			stmt.executeUpdate();
+		}catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			JDBCUtil.close(stmt, conn);
+		}
+	}
+	
+	// 글 삭제  나중에 유지보수할 때 int seq로작성했을때는 비밀번호도 필요하고그런 필요한 상황이 생겼을대 하나하나 넣어줘야 한다 그래서 vo를 통째로 넣는게 일관성 면에서도 좋다. 유지보수할 때 수정할 필요가 없어진다.
+	// 지금은 메모리에 대한 걱정은 없어져서 vo를 통째로 넣어도 성능적으로 문제가 되지 않는다.
+	public void deleteBoard(BoardVO vo) {
+		try {
+			conn = JDBCUtil.getConnection();
+			stmt = conn.prepareStatement(BOARD_DELETE);
+			
+			stmt.setInt(1, vo.getSeq());
+			
+			stmt.executeUpdate();
+		}catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			JDBCUtil.close(stmt, conn);
+		}
+	}
+	
+	// 글 상세 조회
+	public BoardVO getBoard(BoardVO vo) {
+		BoardVO board = null;
+		try {
+			conn = JDBCUtil.getConnection();
+			stmt = conn.prepareStatement(BOARD_GET);
+			
+			stmt.setInt(1, vo.getSeq());
+			
+			rs= stmt.executeQuery();
+			
+			if (rs.next()) {
+				// 검색 결과 한건을 BoardVO 객체를 매핑한다.
+				board = new BoardVO();
+				board.setSeq(rs.getInt("SEQ"));
+				board.setTitle(rs.getString("TITLE"));
+				board.setWriter(rs.getString("WRITER"));
+				board.setContent(rs.getString("CONTENT"));
+				board.setRegDate(rs.getDate("REGDATE"));
+				board.setCnt(rs.getInt("CNT"));
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			JDBCUtil.close(rs, stmt, conn);
+		}
+		return board;
+	}
+	
+	// 글 목록 검색
+	public List<BoardVO> getBoardList() {
+		// 비어있는 리스트 컬렉션을 생성한다.
+		List<BoardVO> boardList = new ArrayList<BoardVO>();
+		try {
+			conn = JDBCUtil.getConnection();
+			stmt = conn.prepareStatement(BOARD_LIST);
+			
+			rs = stmt.executeQuery();
+			
+			while (rs.next()) {
+				// 검색 결과 한 row당 하나의 BoardVO 객체를 매핑한다.				
+				BoardVO  board = new BoardVO();
+				board.setSeq(rs.getInt("SEQ"));
+				board.setTitle(rs.getString("TITLE"));
+				board.setWriter(rs.getString("WRITER"));
+				board.setContent(rs.getString("CONTENT"));
+				board.setRegDate(rs.getDate("REGDATE"));
+				board.setCnt(rs.getInt("CNT"));
+				
+				// 검색 결과가 매핑된 BoardVO 객체를 리스트 컬렉션에 등록한다.
+				boardList.add(board);
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			JDBCUtil.close(rs, stmt, conn);
+		}
+		
+		// 검색 결과가 저장된 리스트 컬렉션을 클라이언트로 리턴한다.
+		return boardList;
+	}
+}
+```
+* VO
+  * VO, DTO 등의 클래스를 만들 때 새로온 변수를 추가하거나, getter/setter 메소드를 계속해서 생성해줘야 하고 변경되면 또 하나하나 변경해줘야 한다.
+  이러한 번거로움을 줄이기 위해서 `Lombok` 이라는 라이브러리를 사용하면 getter/setter같은 메소드를 자동으로 생성해준다.
+  * `@Data` 를 사용하면 필요한 모든 기능들을 포함해서 적용해준다.
+```java
+package com.rubypapper.biz.board;
+
+import java.sql.Date;
+
+import lombok.Data;
+
+// VO(Value Object) 클래스
+/*@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@EqualsAndHashCode*/
+
+@Data
+public class BoardVO {
+	// 테이블의 컬럼 이름(데이터 타입까지)과 동일한 멤버변수를 private로 선언한다.
+	private int seq;
+	private String title;
+	private String writer;
+	private String content;
+	private Date regDate;
+	private int cnt;
+}
+```
+
+### 중요!!!
+* 글 목록 조회나, 글 상세 조회 기능 같은 SELECT 쿼리를 사용해서 보여주는 기능들은 DAO에서 바로
+출력하도록 하면 안되고, 객체를 넘겨줘서 이 메소드를 사용하는 클라이언트(메소드를 호출하는 메소드,객체)에서
+결정해서 사용하도록 설계를 해야 한다!!  
+* select 안에서는 검색 결과를 처리하면 안된다. 메소드를 호출한 쪽에 검색 결과를 리턴 해줘야한다
+그래서 클라이언트가 글 목록을 뿌릴지 데이터가 몇 개인지를 뿌릴지 결정하게 해야한다.
+
+#### DAO의 글 상세조회, 글 목록 조회 메소드
+```java
+// 글 상세 조회
+public BoardVO getBoard(BoardVO vo) {
+	BoardVO board = null;
+	try {
+		conn = JDBCUtil.getConnection();
+		stmt = conn.prepareStatement(BOARD_GET);
+		
+		stmt.setInt(1, vo.getSeq());
+		
+		rs= stmt.executeQuery();
+		
+		if (rs.next()) {
+			
+			// 검색 결과 한건을 BoardVO 객체를 매핑한다.
+			board = new BoardVO();
+			board.setSeq(rs.getInt("SEQ"));
+			board.setTitle(rs.getString("TITLE"));
+			board.setWriter(rs.getString("WRITER"));
+			board.setContent(rs.getString("CONTENT"));
+			board.setRegDate(rs.getDate("REGDATE"));
+			board.setCnt(rs.getInt("CNT"));
+		}
+	}catch (Exception e) {
+		e.printStackTrace();
+	} finally {
+		JDBCUtil.close(rs, stmt, conn);
+	}
+	return board;
+}
+
+// 글 목록 검색
+public List<BoardVO> getBoardList() {
+	// 비어있는 리스트 컬렉션을 생성한다.
+	List<BoardVO> boardList = new ArrayList<BoardVO>();
+	try {
+		conn = JDBCUtil.getConnection();
+		stmt = conn.prepareStatement(BOARD_LIST);
+		
+		rs = stmt.executeQuery();
+		
+		while (rs.next()) {
+			// 검색 결과 한 row당 하나의 BoardVO 객체를 매핑한다.
+			
+			BoardVO  board = new BoardVO();
+			board.setSeq(rs.getInt("SEQ"));
+			board.setTitle(rs.getString("TITLE"));
+			board.setWriter(rs.getString("WRITER"));
+			board.setContent(rs.getString("CONTENT"));
+			board.setRegDate(rs.getDate("REGDATE"));
+			board.setCnt(rs.getInt("CNT"));
+			
+			// 검색 결과가 매핑된 BoardVO 객체를 리스트 컬렉션에 등록한다.
+			boardList.add(board);
+		}
+	}catch (Exception e) {
+		e.printStackTrace();
+	} finally {
+		JDBCUtil.close(rs, stmt, conn);
+	}
+	
+	// 검색 결과가 저장된 리스트 컬렉션을 클라이언트로 리턴한다.
+	return boardList;
+}
+```
+#### GetBoardTest(클라이언트)
+```java
+package com.rubypapper.biz.board;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.List;
+
+public class GetBoardListTest {
+
+	public static void main(String[] args) {
+
+		// 1. 글 목록 조회 기능 처리
+		BoardDAO boardDAO = new BoardDAO();
+		
+		// getBoardList() 메소드가 리턴한 글 목록을 원하는 형태로 사용한다.
+		List<BoardVO> boardList =boardDAO.getBoardList();
+		
+		// select 기능의 메소드는 절대 return타입이 void이면 안된다 결과를 클라이언트에게 보내줘야 한다.
+		// 어떻게 쓸지는 클라이언트가 결정해야지 dao가 결정하면 안된다!!! 중요!!!!!
+		
+        // 1. CASE 글 목록을 출력
+		System.out.println("[ BOARD LIST ]");
+		for (BoardVO board : boardList) {
+			System.out.println("---->" + board.toString());
+		}
+		
+		// 2. CASE
+		System.out.println("검색된 게시글 수 : " + boardList.size());
+
+	}
+}
+```
+
+* 클라이언트 - 한 객체의 메소드(a)안에서 다른 객체가 가지고 있는 메소드(b)를 호출할때 
+b 입장에서 애를 사용하는 클라이언트는 a가 된다. 
+  * 객체에 한에서 클라이언트는 나를 사용하는 누군가를 클라이언트라한다.        

@@ -1,104 +1,103 @@
 package com.rubypapper.biz.board;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class GetBoardTest {
-    public static void main(String[] args) {
-        Connection conn = null;
-        Statement stmt = null;
-        ResultSet rs = null;
 
-        // ë­˜ í•´ë„ 1,2,3ì€ ë˜‘ê°™ë‹¤.
-        try {
-            // 1. ë“œë¼ì´ë²„ ê°ì²´ë¥¼ ë©”ëª¨ë¦¬ì— ë¡œë”©í•œë‹¤.
-//            DriverManager.registerDriver(new org.h2.Driver()); // ì• ë¥¼ì´ìš©í•˜ë©´ ì´ í´ë˜ìŠ¤ê°€ íŒ¨í‚¤ì§€ì— ì—†ìœ¼ë©´ ì•„ì˜ˆ ì»´íŒŒì¼ë¶€í„° ì•ˆëœë‹¤.
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
 
-            Class.forName("org.h2.Driver"); // ë¬¸ìì—´ë¡œ ë“±ë¡í•˜ëŠ” ë°©ë²• ê²°ê³¼ëŠ” ê°™ìŒ. ì‹¤ì œí”„ë¡œì íŠ¸ì—ì„  ì´ê±¸ ë” ë§ì´ ì”€ ê°„ê²°í•´ì„œ
+		// 1. ±Û »ó¼¼ Á¶È¸ ±â´É Ã³¸®
+		BoardDAO boardDAO = new BoardDAO();
+//        boardDAO.getBoard(1);
+		BoardVO vo = new BoardVO();
+		
+		vo.setSeq(1);
+		
+		BoardVO board = boardDAO.getBoard(vo);
+		
+		System.out.println(board.getSeq() + "¹ø °Ô½Ã±ÛÀÇ »ó¼¼ Á¤º¸");
+		System.out.println("Á¦¸ñ : " + board.getTitle());
+		System.out.println("ÀÛ¼ºÀÚ : " + board.getWriter());
+		System.out.println("³»¿ë : " + board.getContent());
+		System.out.println("µî·ÏÀÏ : " + board.getRegDate());
+		System.out.println("Á¶È¸¼ö : " + board.getCnt());
+		
+		
+/*		   Connection conn = null;
+	        Statement stmt = null;
+	        ResultSet rs = null;
 
-            // 2. ì»¤ë„¥ì…˜ì„ íšë“í•œë‹¤.
-            String url = "jdbc:h2:tcp://localhost/~/test";
-            conn = DriverManager.getConnection(url, "sa", "");// ì—°ê²° ê°ì²´ë¥¼ ë°˜í™˜ë°›ëŠ”ë‹¤.
+	        // ¹» ÇØµµ 1,2,3Àº ¶È°°´Ù.
+	        try {
+	            // 1. µå¶óÀÌ¹ö °´Ã¼¸¦ ¸Ş¸ğ¸®¿¡ ·ÎµùÇÑ´Ù.
+//	            DriverManager.registerDriver(new org.h2.Driver()); // ¾Ö¸¦ÀÌ¿ëÇÏ¸é ÀÌ Å¬·¡½º°¡ ÆĞÅ°Áö¿¡ ¾øÀ¸¸é ¾Æ¿¹ ÄÄÆÄÀÏºÎÅÍ ¾ÈµÈ´Ù.
 
+	            Class.forName("org.h2.Driver"); // ¹®ÀÚ¿­·Î µî·ÏÇÏ´Â ¹æ¹ı °á°ú´Â °°À½. ½ÇÁ¦ÇÁ·ÎÁ§Æ®¿¡¼± ÀÌ°É ´õ ¸¹ÀÌ ¾¸ °£°áÇØ¼­
 
-            // 3. SQLì „ë‹¬ ê°ì²´(Statement)ë¥¼ ìƒì„±í•œë‹¤.
-            stmt = conn.createStatement();
-
-            // 4. SQLì„ ì „ì†¡í•œë‹¤.
-            String sql = "select * from board where seq = 1";
-            rs = stmt.executeQuery(sql); // select ì „ìš© ë©”ì†Œë“œ rsìœ¼ë¡œ ë°˜í™˜í•¨. ê²°ê³¼ ì§‘í•©
-
-            // 5. ê²€ìƒ‰ ê²°ê³¼ ì²˜ë¦¬(SELECT êµ¬ë¬¸ì— í•œí•˜ì—¬ í•´ë‹¹ëœë‹¤.)
-            System.out.println("[ BOARD LIST ]");
-            if (rs.next()){ // ì¡°ê±´ì‹ìœ¼ë¡œ í•˜ë‚˜ë§Œ ë‚˜ì˜¤ë„ë¡ í•´ì¤˜ì„œ ifë¬¸ìœ¼ë¡œ ë°”ê¾¼ë‹¤.
-                System.out.println("ê²Œì‹œê¸€ ìƒì„¸ ì •ë³´");
-                System.out.println("ë²ˆí˜¸ : " + rs.getInt("SEQ") );
-                System.out.println("ì œëª© : " + rs.getString("TITLE"));
-                System.out.println("ì‘ì„±ì : " + rs.getString("WRITER"));
-                System.out.println("ë‚´ìš© : " + rs.getString("CONTENT"));
-                System.out.println("ë“±ë¡ì¼ : " + rs.getDate("REGDATE"));
-                System.out.println("ì¡°íšŒìˆ˜ : " + rs.getInt("CNT"));
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-
-            try{
-
-//
-
-                if(rs != null)
-                    rs.close();
-            }catch (SQLException e){
-                e.printStackTrace();
-            }finally {
-                rs = null;
-            }
-
-            try{
-
-//                rs.close();
-//                stmt.close();
-//                conn.close();
-
-                if(stmt != null)
-                    stmt.close();
-            }catch (SQLException e){
-                e.printStackTrace();
-            }finally {
-                stmt = null;
-            }
-
-            try{
-
-//                rs.close();
-//                stmt.close();
-//                conn.close();
-
-                if(!conn.isClosed() && conn != null) // ì»¤ë„¥ì…˜ì´ ë‹«íŒê²Œ ì•„ë‹ˆë¼ë©´ ì´ì¡°ê±´ì„ ì‹¤í–‰í•´ë¼.
-                    conn.close();
-            }catch (SQLException e){
-                e.printStackTrace();
-            }finally {
-                conn = null;
-            }
+	            // 2. Ä¿³Ø¼ÇÀ» È¹µæÇÑ´Ù.
+	            String url = "jdbc:h2:tcp://localhost/~/test";
+	            conn = DriverManager.getConnection(url, "sa", "");// ¿¬°á °´Ã¼¸¦ ¹İÈ¯¹Ş´Â´Ù.
 
 
-        }
-        /**
-         * ì…ì¶œë ¥ ìŠ¤íŠ¸ë¦¼ì„ í•  ë•Œ ë‹¤ëë‚˜ë©´ ì…ì¶œë ¥ìŠ¤íŠ¸ë¦¼ì„ ê¼­ ë‹«ì•„ì¤˜ì•¼í•œë‹¤.
-         * ì´ ì»¤ë„¥ì…˜ì€ êµ‰ì¥íˆ ì¤‘ìš”í•˜ë‹¤. ì•ˆê·¸ëŸ¬ë©´ ë‹¤ë¥¸ ì–´í”Œë¦¬ì¼€ì´ì…˜ì—ì„œ ì»¤ë„¥ì…˜ì„ ëª» ë§ºëŠ”ë‹¤.
-         * ì•ˆ ëŠëŠ”ë‹¤ê³  ì‹¤í–‰ì´ ì•ˆë˜ëŠ”ê±´ ì•„ë‹Œë° ì›¹ì—ì„œ ì—¬ëŸ¬ëª…ì´ dbì—°ë™ì„ í•˜ê¸° ë•Œë¬¸ì— ì¤‘ìš”í•¨.
-         * ì»¤ë„¥ì…˜ì€ ì»¤ë„¥ì…˜ statement, resultset ìˆœìœ¼ë¡œí•´ì„œ close()ë¥¼ í•  ë•Œë„ ì—­ìˆœìœ¼ë¡œ ë‹«ì•„ì•¼ í•œë‹¤.
-         * ì•„ë˜ëŠ” rs.close()ì—ì„œ ì—ëŸ¬ê°€ ëœ¨ë©´ catch ë¡œ ë„˜ì–´ê°€ì„œ stmt, conn close()ê°€ ì‹¤í–‰ë˜ì§€ ì•Šì•„ì„œ ì—ëŸ¬ê°€ ëœ¬ë‹¤. ì´ë ‡ê²Œ í•˜ë©´ ì•ˆë¨.
-         * //            try{
-         * ////                rs.close();
-         * ////                stmt.close();
-         * ////                conn.close();
-         * //            } catch (SQLException e){
-         * //                e.printStackTrace();
-         * //            }
-         *  ë“±ë¡ ìˆ˜ì • ì‚­ì œëŠ” resultsetì„ ì‚¬ìš©í•˜ì§€ ì•Šê¸° ë•Œë¬¸ì— stmt, connë§Œ ë‹«ì•„ì£¼ë©´ ëœë‹¤.
-         */
-    }
+	            // 3. SQLÀü´Ş °´Ã¼(Statement)¸¦ »ı¼ºÇÑ´Ù.
+	            stmt = conn.createStatement();
+
+	            // 4. SQLÀ» Àü¼ÛÇÑ´Ù.
+	            String sql = "select * from board where seq = 1";
+	            rs = stmt.executeQuery(sql); // select Àü¿ë ¸Ş¼Òµå rsÀ¸·Î ¹İÈ¯ÇÔ. °á°ú ÁıÇÕ
+
+	            // 5. °Ë»ö °á°ú Ã³¸®(SELECT ±¸¹®¿¡ ÇÑÇÏ¿© ÇØ´çµÈ´Ù.)
+	            System.out.println("[ BOARD LIST ]");
+	            if (rs.next()){ // Á¶°Ç½ÄÀ¸·Î ÇÏ³ª¸¸ ³ª¿Àµµ·Ï ÇØÁà¼­ if¹®À¸·Î ¹Ù²Û´Ù.
+	                System.out.println("°Ô½Ã±Û »ó¼¼ Á¤º¸");
+	                System.out.println("¹øÈ£ : " + rs.getInt("SEQ") );
+	                System.out.println("Á¦¸ñ : " + rs.getString("TITLE"));
+	                System.out.println("ÀÛ¼ºÀÚ : " + rs.getString("WRITER"));
+	                System.out.println("³»¿ë : " + rs.getString("CONTENT"));
+	                System.out.println("µî·ÏÀÏ : " + rs.getDate("REGDATE"));
+	                System.out.println("Á¶È¸¼ö : " + rs.getInt("CNT"));
+	            }
+
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        } finally {
+
+	            try{
+	                if(rs != null)
+	                    rs.close();
+	            }catch (SQLException e){
+	                e.printStackTrace();
+	            }finally {
+	                rs = null;
+	            }
+
+	            try{
+
+	                if(stmt != null)
+	                    stmt.close();
+	            }catch (SQLException e){
+	                e.printStackTrace();
+	            }finally {
+	                stmt = null;
+	            }
+
+	            try{
+
+	                if(!conn.isClosed() && conn != null) // Ä¿³Ø¼ÇÀÌ ´İÈù°Ô ¾Æ´Ï¶ó¸é ÀÌÁ¶°ÇÀ» ½ÇÇàÇØ¶ó.
+	                    conn.close();
+	            }catch (SQLException e){
+	                e.printStackTrace();
+	            }finally {
+	                conn = null;
+	            }
+              }
+	        */
+        
+	}
+
 }

@@ -127,6 +127,7 @@ doGet(), doPost() 메소드를 호출하여서 메소드 동작이 이루어진�
   * getReuestURL() - URL 호출
   * getMethod() - 요청방식이 무엇인지 확인한다.
   * getQueryString() - 쿼리스트링을 출력한다. 
+  
 #### HttpServletResponse
 * 프로그램의 처리 결과를 클라이언트로 보내기 위해 사용한다.
 * Response 객체는 클라이언트로 보낼 정보들이 담겨지고, 응답 프로토콜과 관련되서 정보들이 응답 프로토콜에 의해 클라이언트로 전송된다.  
@@ -255,8 +256,12 @@ public class InsertBoardServlet extends HttpServlet {
 ```
 
 ### Servlet Filter
+* Filter는 서버가 뜰 때 바로 메모리에 로딩되서 FreeLoading, 서블릿은 요청이 있을 때 메모리에 로딩되서 Lazy-Loding이다.
 * 필터는 클라이언트의 Request가 Servlet에 도달하기 전에 요청 데이터를 원하는 형태로 조작하는 사전처리,
 혹은 Servlet에서 나온 응답 데이터를 조작하여 사후처리 목적으로 사용된다.
+* 필터는 기능당 하나씩 만든다 (예로, 시간을 체크하는 TimeCheckFilter, 인코딩 설정하는 EncodingFilter 등)
+* 서블릿 실행 사전 처리 사후처리할 때 필요하다.
+* 실제 서블릿을 실행시키는 코드는 `chain.doFilter()` 이걸 주석 처리하면 서블릿이 실행이 안된다. 사전처리 사후처리만 실행이 된다.
 
 ![ServletFilter](/Java/documents/images/ServletFilter.jpg)
 
@@ -267,8 +272,7 @@ public class InsertBoardServlet extends HttpServlet {
 2. 그런 다음 chain.dofilter를 만나면 해당 서블릿이 실행된다. 서블릿의 메소드들이 실행이 된다. 
 3. 메소드가 실행되고 권한이 다시 필터로 돌아오고 사후처리가 실행되고 브라우저로 돌아간다.
 
-* 서블릿 실행 사전 처리 사후처리할 때 필요하다.
-* 실제 서블릿을 실행시키는 코드는chain.dofilter 이걸 주석 처리하면 서블릿이 실행이 안된다. 사전처리 사후처리만 실행이 된다.
+
 ```java
 package com.rubypapper.web.common;
 
@@ -317,3 +321,101 @@ public class TimeCheckFilter implements Filter {
     <url-pattern>*.do</url-pattern>
   </filter-mapping>
 ```
+
+#### init()
+* 필터를 생성할 때 `FilterConfig` 객체를 서블릿 엔진에서 생성해서
+`web.xml`의 로컬 파라미터를 담아서 `inint()`의 파라미터로 넘겨준다.
+
+```java
+package com.rubypapper.web.common;
+
+import java.io.IOException;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+
+public class CharacterEncodingFilter implements Filter {
+	private String encoding;
+	private String name;
+
+	public void init(FilterConfig fConfig) throws ServletException {
+		// web.xml 파일에 설정된 로컬 파라미터 정보 추출
+		encoding = fConfig.getInitParameter("encoding");
+		name = fConfig.getInitParameter("name");
+	}
+}
+```
+
+#### chain.doFilter()
+* 메소드명에서도 유추해볼 수 있듯이 필터들을 체인처럼 연쇄적으로 동작 시킬 수 있다.
+필터는 하나의 기능만을 하기 때문에 사전 처리나 사후 처리를 할 때 설정을 해두면 
+필터하나가 하나의 기능을 수행하고 끝나고 `chan.doFilter()`를 만나면 다음 기능을 가진 필터가 수행이 된다.
+이렇게 쭉 메모리에 로딩된 순서대로 동작을 하고 필터가 없을 때 서블릿으로 실행권한이 넘어가게 된다.
+
+* TimeCheckFilter가 먼저 실행되고 CharacterEncodingFilter가 실행이 된다.
+```java
+public class TimeCheckFilter implements Filter {
+
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+		// 클라이언트가 요청한 서블릿 정보 추출
+		HttpServletRequest req = (HttpServletRequest) request; // 왜 형변환 하는지 확인
+		String uri = req.getRequestURI(); 
+		String path = uri.substring(uri.lastIndexOf("/")); // 마지막 /이후의 값이 나온다.
+		
+		long startTime = System.currentTimeMillis();
+		
+		chain.doFilter(request, response);
+		long endTime = System.currentTimeMillis();
+		System.out.println(path + "요청 처리에 소요된 시간: " + (endTime-startTime) + "(ms)초");
+
+	}
+}
+```
+```java
+public class CharacterEncodingFilter implements Filter {
+
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+
+		request.setCharacterEncoding(encoding);
+		chain.doFilter(request, response);
+	}
+}
+```
+
+#### 서블릿의 로딩시점을 변경 가능
+* 필터는 Free-Loading이라 바로 메모리에 올라가지만 서블릿은 Lazy-Loding이여서 요청이 올 때 메모리에 로딩이 되는데
+이걸 web.xml에 설정을 해서 Free-Loding처럼 바로 메모리에 올라가도록 변경이 가능하다.
+* 해당 서블릿에 `<load-on-startup>숫자</load-on-startup>` 이걸 작성해주면 되는데 숫자가 작을 수록 우선순위가 더 높다.
+```xml
+<servlet>
+    <description></description>
+    <display-name>login</display-name>
+    <servlet-name>login</servlet-name>
+    <servlet-class>com.rubypaper.web.user.LoginServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>login</servlet-name>
+    <url-pattern>/login.do</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>getBoardList</display-name>
+    <servlet-name>getBoardList</servlet-name>
+    <servlet-class>com.rubypaper.web.board.GetBoardListServlet</servlet-class>
+    <load-on-startup>2</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>getBoardList</servlet-name>
+    <url-pattern>/getBoardList.do</url-pattern>
+  </servlet-mapping>
+```
+
+### ServletListner
+* 서블릿엔진이 실행된 직후 바로 실행이 되는 객체이다.
+* 서블릿이 실행되기전에 딱 한번 실행이되는 로직이 있다면 Listener init()메소드에 설정을 해놓으면 된다.
+* 필터보다 먼저 메모리에 뜨게 된다.
+

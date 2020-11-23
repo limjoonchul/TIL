@@ -32,13 +32,13 @@
 * 톰캣은 아파치 재단에서 만든 자바로 되어있는 웹 어플리케이션 서버이다.
 ## Servlet
 * 자바를 사용하여 웹페이지를 동적으로 생성하는 서버측 프로그램을 말한다.
-* 웹 서버의 선응을 향상시키기 위해 사용되는 자바 클래스의 일종이다.
-  * JSP와 비슷하지만 JSP는 HTML문서 안에 Java코드를 포함하고 Servlet은 Java코드안에 HTML을 포함한다.
+* 웹 서버의 성능을 향상시키기 위해 사용되는 자바 클래스의 일종이다.
+  * JSP와 비슷하지만 JSP는 HTML문서 안에 Java코드를 포함하고 Servlet은 Java 코드안에 HTML을 포함한다.
 * 서블릿은 자바 기술은 맞지만 톰캣 도움 없인 절대 실행할 수 없다.
 ### 서블릿 클래스 작성 규칙
-* 외울 필요는 없고 이런 규칙으로 작성된다는 것만 알아두면 된다. IDE에서 서블릿으로 클래스를 생성하게 되면 자동으로 이 규칙에 맞게 생성해준다.
+* 외울 필요는 없고 이런 규칙으로 작성된다는 것만 알아두면 된다. IDE에서 서블릿으로 클래스를 생성하게 되면 자동으로 이 규칙에 맞게 생성해 준다.
  1. HttpServlet 클래스를 상속해야 한다. - 서블릿으로 인지한다.
- 2. public 클래스로 만들어야 한다. - 그래야 서블릿엔진에서 접근할 수 있으니깐.
+ 2. public 클래스로 만들어야 한다. - 그래야 서블릿 엔진에서 접근할 수 있으니깐.
  3. default 생성자가 있어야 한다. - 안 만들어도 자동 제공
  4. 요청 방식(method)에 따라 doGet이나 doPost를 재정의(Overriding)한다.
  5. 부모(HttpServlet) 클래스의 메소드를 재정의 하지 않으면 상속된다.
@@ -48,17 +48,19 @@
 * Multi-Thread 
    * Servlet은 Multi-Thread로 동작하기 때문에 효율적이다.
    * 서블릿은 멀티스레드로 동작하기 때문에 웹에서 매우 효율적이다.
-   * 서블릿을 멀티스레드로 동작시키는 것은 서블릿엔진이 하는 것이지 개발자가 하는 것이 아니다.
+   * 서블릿을 멀티스레드로 동작시키는 것은 서블릿 엔진이 하는 것이지 개발자가 따로 구현해야 하는 것이 아니다.
    
 * 플랫폼 독립성
   * 서블릿은 자바로 작성되기 때문에 플랫폼에 무관하게 동일한 실행결과를 보인다.
+  
 * 서버 독립성
   * 서블릿은 웹 서버와 무관하게 실행이 된다. 서블릿 규칙에 맞게 작성을 해놓으면 톰캣서버에서 되던게 제우스 같은 다른 서버에서도 똑같이 실행이 된다.
+  
 * 플랫폼 독립성과 서버 독립성 이 두가지로 이식성이 좋다. 
 * 확장성 - 외부 프레임워크라 유틸리티 클래스라던지 서블릿 프로그램을 더 빠르게 할 수 있다.
 
 ### 서블릿의 단점
-* 서블릿은 Java코드안에 HTML을 담는 것이여서 HTML같은 코드를 바꿀려면 하나하나 바꿔줘야 하고 자동완성 기능도 지원이 안된다
+* 서블릿은 Java 코드안에 HTML을 담는 것이여서 HTML같은 코드를 바꿀려면 하나하나 바꿔 줘야 하고 자동완성 기능도 지원이 안된다.
 그리고 `""` , `''` 를 같이 써야 해서 굉장히 헷갈리고 자바 문법에 어긋나서 에러가 나는 경우도 생긴다.
 전체적으로 디자인을 바꾸는게 엄청 귀찮고 번거롭다.
 
@@ -88,7 +90,7 @@
 1. 클라이언트에서 서블릿 요청(/hello.do)이 오면 서블릿 엔진은 요청된 서블릿이 메모리에 존재하는지 여부를 판단한다.
 2. 요청한 서블릿이 메모리에 없으면 서블릿도 클래스니깐 web.xml에 매핑된 hello.servlet를 객체를 찾아서 생성하고 메모리에 로딩한다.
 3. 생성자를 호출한다. 무조건 디폴트 생성자를 찾아서 메모리에 뜬다.(절대 매개변수가 있는 생성자를 인식하지 못한다.)
-4. Init()를 호출한다. 디폴트 생성자가 호출이되서 서블릿 객체가 메모리에 뜨기 때문에 멤버번수를 `단 한번만` 초기화할 때 필요하다.
+4. Init()를 호출한다. 디폴트 생성자가 호출이 되서 서블릿 객체가 메모리에 뜨기 때문에 멤버번수를 `단 한번만` 초기화할 때 필요하다.
 5. 스레드 풀에서 스레드가 랜덤으로 튀어 나와서 할당이 된다.
 6. 이 스레드가 서블릿 객체의 service()를 호출한다.(스레드는 run()를 호출하게 되어있는데 내부적으로 이 run()은 service()만 호출하게 되어있다.)
    * 메모리에 올라간 서블릿 객체를 스레드 풀에 있는 스레드들이 공유한다.
@@ -121,7 +123,7 @@ doGet(), doPost() 메소드를 호출하여서 메소드 동작이 이루어진�
   * 엄청나게 많은 정보들이 담겨져서 전송이 된다.
 
 * Request의 주요 사용하는 메소드
-  * setcharacterencoding() - 입력 정보가 한글로 되어있을 때 변환되게 하기 위해서 사용한다.
+  * setCharacterEncoding() - 입력 정보가 한글로 되어있을 때 변환되게 하기 위해서 사용한다.
   * getParameter() - URLD의 ?뒤의 파라미터를 가져올 때 사용한다.
   * getSession() - 세션 정보를 가져올 때 사용한다.
   * getReuestURL() - URL 호출
@@ -138,10 +140,9 @@ doGet(), doPost() 메소드를 호출하여서 메소드 동작이 이루어진�
    이 출력스트림은 정확히 바디와 관련된 출력스트림이 만들어진다.
   * sendRedirect() - 새로운 URL로 보낼 때 사용하는 메소드이다. 브라우저에게 새로운 URL을 요청하라고 명령하는 메소드
   
-
 ### Encoding 설정
 * `request.setCharacterEncoding("EUC-KR")`처럼 각 클래스마다 직접 인코딩 지정하는 방식을 사용할 수 있는데,
-인코딩 정책이 바뀌거나, 유지보수적인 측면에서도 좋지 못하다 그래서 변수로 값을 전달바는 형태로 바꾸어야 한다.
+인코딩 정책이 바뀌거나, 유지 보수적인 측면에서도 좋지 못하다 그래서 변수로 값을 전달바는 형태로 바꾸어야 한다.
 * 방법에는 2가지 방법이 있는데 하나는 로컬 파라미터를 이용하는 것이고 다른 하나는 글로벌 파라미터를 이용하는 것이다.
 
 #### 로컬 파라미터(Local Parameter)
@@ -215,10 +216,10 @@ public class InsertBoardServlet extends HttpServlet {
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// 0. 글로벌 파라미터 정보 추출
-		ServletContext context = getServletContext(); // 부모로부터 상속됨 httpservlet에서 상송됨
+		ServletContext context = getServletContext(); // 부모로부터 상속됨, httpservlet에서 상속됨
 		encoding = context.getInitParameter("boardEncoding");
 		
-		request.setCharacterEncoding(encoding); // 마찬가지로 가져올때 포맷 설정
+		request.setCharacterEncoding(encoding); // 마찬가지로 가져올 때 포맷 설정
 	}
 }
 ```
@@ -265,8 +266,8 @@ public class InsertBoardServlet extends HttpServlet {
 
 ![ServletFilter](/Java/documents/images/ServletFilter.jpg)
 
-* Servlet 뒤에 .do만 붙어있으면  요청이 오면 동작이되도록 설정했다.(*.do) 
-* init(), destroy(), doFilter()는 Filter인터페이스를 상속하고 있어서 오버라이딩이 되어 있어야 한다.
+* Servlet 뒤에 .do만 붙어있으면  요청이 오면 동작이 되도록 설정했다.(*.do) 
+* init(), destroy(), doFilter()는 Filter 인터페이스를 상속하고 있어서 오버라이딩이 되어 있어야 한다.
 #### Filter 순서
 1. 브라우저에서  .do로 요청이 오면 filter가 가로채서 사전 처리가 된다. 
 2. 그런 다음 chain.dofilter를 만나면 해당 서블릿이 실행된다. 서블릿의 메소드들이 실행이 된다. 
@@ -323,8 +324,7 @@ public class TimeCheckFilter implements Filter {
 ```
 
 #### init()
-* 필터를 생성할 때 `FilterConfig` 객체를 서블릿 엔진에서 생성해서
-`web.xml`의 로컬 파라미터를 담아서 `inint()`의 파라미터로 넘겨준다.
+* 필터를 생성할 때 `FilterConfig` 객체를 서블릿 엔진에서 생성해서 `web.xml`의 로컬 파라미터를 담아서 `init()`의 파라미터로 넘겨준다.
 
 ```java
 package com.rubypapper.web.common;
@@ -352,8 +352,8 @@ public class CharacterEncodingFilter implements Filter {
 #### chain.doFilter()
 * 메소드명에서도 유추해볼 수 있듯이 필터들을 체인처럼 연쇄적으로 동작 시킬 수 있다.
 필터는 하나의 기능만을 하기 때문에 사전 처리나 사후 처리를 할 때 설정을 해두면 
-필터하나가 하나의 기능을 수행하고 끝나고 `chan.doFilter()`를 만나면 다음 기능을 가진 필터가 수행이 된다.
-이렇게 쭉 메모리에 로딩된 순서대로 동작을 하고 필터가 없을 때 서블릿으로 실행권한이 넘어가게 된다.
+필터 하나가 하나의 기능을 수행하고 끝나고 `chan.doFilter()`를 만나면 다음 기능을 가진 필터가 수행이 된다.
+이렇게 쭉 메모리에 로딩된 순서대로 동작을 하고 필터가 없을 때 서블릿으로 실행 권한이 넘어가게 된다.
 
 * TimeCheckFilter가 먼저 실행되고 CharacterEncodingFilter가 실행이 된다.
 ```java
@@ -388,7 +388,7 @@ public class CharacterEncodingFilter implements Filter {
 #### 서블릿의 로딩시점을 변경 가능
 * 필터는 Free-Loading이라 바로 메모리에 올라가지만 서블릿은 Lazy-Loding이여서 요청이 올 때 메모리에 로딩이 되는데
 이걸 web.xml에 설정을 해서 Free-Loding처럼 바로 메모리에 올라가도록 변경이 가능하다.
-* 해당 서블릿에 `<load-on-startup>숫자</load-on-startup>` 이걸 작성해주면 되는데 숫자가 작을 수록 우선순위가 더 높다.
+* 해당 서블릿에 `<load-on-startup>숫자</load-on-startup>` 이걸 작성해주면 되는데 숫자가 작을 수록 우선 순위가 더 높다.
 ```xml
 <servlet>
     <description></description>
@@ -414,8 +414,8 @@ public class CharacterEncodingFilter implements Filter {
   </servlet-mapping>
 ```
 
-### ServletListner
+### ServletListener
 * 서블릿엔진이 실행된 직후 바로 실행이 되는 객체이다.
-* 서블릿이 실행되기전에 딱 한번 실행이되는 로직이 있다면 Listener init()메소드에 설정을 해놓으면 된다.
+* 서블릿이 실행되기 전에 딱 한번 실행이 되는 로직이 있다면 Listener init()메소드에 설정을 해 놓으면 된다.
 * 필터보다 먼저 메모리에 뜨게 된다.
 

@@ -178,6 +178,9 @@
  * 물론 접속 시간에 제한을 두어 일정 시간 응답이 없다면 세션을 끊도록 설정이 가능하다.
 * 사용자에 대한 정보를 서버에 저장하기 대문에 쿠키보다 보안에 좋지만, 사용자가 많아질 수록 서버 메모리를 많이 차지하게 된다.
 
+![세션](/Java/documents/images/세션흐름.png)
+
+* 이미지 출처 : [https://codevang.tistory.com/201?category=844273](https://codevang.tistory.com/201?category=844273)
 ### 세션의 동작 방식
 1. 클라이언트가 서버 접속 시 세션 ID를 발급한다.
 2. 클라이언트가 세션 ID에 대해 쿠키를 사용해서 저장(JSEESIONID)

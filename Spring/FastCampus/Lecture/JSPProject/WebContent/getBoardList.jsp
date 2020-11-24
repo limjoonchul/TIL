@@ -1,13 +1,17 @@
+<%@page import="com.rubypapper.biz.user.UserVO"%>
 <%@page import="java.util.List"%>
 <%@page import="com.rubypapper.biz.board.BoardDAO"%>
 <%@page import="com.rubypapper.biz.board.BoardVO"%>
 <%@page contentType="text/html; charset=EUC-KR" %>
 
 <%
+    // 0. 세션에 등록된 정보 꺼내기
+    // HttpSession session1 = request.getSession();
+    UserVO user = (UserVO) session.getAttribute("user");
+    
+
     //1. 사용자 입력 정보 추출(검색 기능은 숙제...)
-	// request.setCharacterEncoding("EUC-KR");
-	
-	
+	// request.setCharacterEncoding("EUC-KR");	
 	String searchCondition = request.getParameter("searchCondition"); 
 	String searchKeyword = request.getParameter("searchKeyword");
 	
@@ -25,6 +29,7 @@
 	
 	BoardDAO boardDAO = new BoardDAO();
 	List<BoardVO> boardList = boardDAO.getBoardList(vo);
+	// System.out.println(boardList);
 	// db에서 글목록을 가져옴
 	
 	// 3. 응답 화면 구성
@@ -41,7 +46,7 @@
 	<center>
 		<h1>게시글 목록</h1>
 		<h3>
-			에이님 로그인 환영합니다...... <a href='logout_proc.jsp'>Log-out</a>
+			<font color='red'><%= user.getName() %></font>님 로그인 환영합니다...... <a href='logout_proc.jsp'>Log-out</a>
 		</h3>
 		<!-- 검색 시작 -->
 		<form action='getBoardList.jsp' method='post'>
@@ -64,15 +69,15 @@
 				<th bgcolor='orange' width='150'>등록일</th>
 				<th bgcolor='orange' width='100'>조회수</th>
 			</tr>
-			<% for(BoardVO board :boardList) { %> <!-- 따로 나눠서 처리해야함 -->
-			<tr>
-				<td><%= board.getSeq() %></td>
-				<td align='left'><a href='getBoard.jsp?seq=11'><%= board.getTitle() %></a></td>
-				<td><%= board.getWriter() %></td>
-				<td><%= board.getRegDate() %></td>
-				<td><%= board.getCnt() %><td>
-			</tr>
-			<%} %>
+		<% for(BoardVO board :boardList) { %> <!-- 따로 나눠서 처리해야함 -->
+        <tr>
+            <td><%= board.getSeq() %></td>
+            <td align='left'><a href='getBoard.jsp?seq=<%=board.getSeq()%>'><%= board.getTitle() %></a></td>
+            <td><%= board.getWriter() %></td>
+            <td><%= board.getRegDate() %></td>
+            <td><%= board.getCnt() %><td>
+        </tr>
+        <%} %>
 		</table>
 		<br> <a href='insertBoard.html'>새글 등록</a>
 	</center>

@@ -199,7 +199,7 @@ package pholymorphism4;
 
 import org.springframework.stereotype.Component;
 
-@Component("apple")
+@Component
 public class AppleSpeaker implements Speaker{
 	public AppleSpeaker() {
 		System.out.println("===> AppleSpeaker 생성");
@@ -259,7 +259,57 @@ public class LGTv implements Tv {
 ```xml
 <context:component-scan base-package="pholymorphism4"></context:component-scan>
 ```
-* 이 패키지로 시작하는 모든 클래스들 중에서 @Componet가 붙어있는 클래스를 스캔해라라는 의미이다.
+* 이 패키지로 시작하는 모든 클래스들 중에서 `@Component`가 붙어있는 클래스를 스캔해라라는 의미이다.
+### 주의
+* 애노테이션을 사용하는 방법은 xml에 bean을 직접 등록하는 방법을 전혀쓰지 않도록 만드는 것이 아니라,
+과하게 xml 파일이 길어지는 것을 최소화하기 위해 사용하는 것이다 그래서 이 두개의 방법을 적절히 사용하는 것이 중요하다.
+Speaker 객체를 자바코드를 변경하지 않고 자유롭게 객체들을 바꿀려면? 이때는 애노테이션보다는 xml로 빈을 등록하고
+사용하는 방법이 더 좋다. AppleSpeaker, SonySpeaker의 `@Component` 을 지워야 한다.
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<context:component-scan base-package="polymorphism4"></context:component-scan>
+	<bean class="polymorphism4.AppleSpeaker"></bean>
+
+</beans>
+```
+```java
+package polymorphism4;
+
+import org.springframework.stereotype.Component;
+
+public class AppleSpeaker implements Speaker{
+    public AppleSpeaker() {
+        System.out.println("===> AppleSpeaker 객체 생성 ");
+    }
+
+    @Override
+    public void volumeUp() {
+        System.out.println("---> AppleSpeaker 소리 올린다. ");
+    }
+
+    @Override
+    public void volumeDown() {
+        System.out.println("---> AppleSpeaker 소리 내린다. ");
+    }
+}
+```
+
+### 역할별로 애노테이션 세분화
+* `@Component` 가 붙어있으면 빈 등록된 객체로 인식하고 컨테이너에서 이 객체를 관리해 준다.
+그런데 모든 클래스에 `@Component`만 붙이게 되면 구분이 안가서 어노테이션을 각 역할에 맞게 다르게 줄 수 있다.
+* `@Service` - ServiceImpl이 붙어져 있는 비즈니스 로직을 처리하는 클래스들에 사용한다.
+* `@Repository` - DAO 같은 데이터베이스와 연동을 처리하는 클래스들에 사용한다.
+* `@Controller` - 사용자 요청을 처리하는 클래스들에 사용한다.
+  
+* 이 애노테이션들이 꼭 각 역할을 하는 애노테이션에만 사용할 수 있게 되어 있는건 아니다.
+DAO클래스에도 Service등을 사용할 수 있다라는 말인데, 이 애노테이션들이 Component를 포함하고 있기 때문에
+사실상 어디서든 사용해도 상관이 없지만 각 역할을 구분하기 쉽게 사용하는 것이니 역할에 맞게 사용하면 된다. 
 
 ### DI(Dependency Injection) 의존성 주입
 * IoC의 핵심으로 Constructor Injection, Setter Injection 이 두 가지가 있다.

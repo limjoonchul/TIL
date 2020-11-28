@@ -1,29 +1,28 @@
 # MVC 패턴
 ## MVC 패턴 이란?
 * Model, View, Controller 이 세가지 구성요소로 프로그래밍이 이루어지는 패러다임으로
-클라이언트의 요청이 오면 Controller에서 값을 받아서 처리하고 Model에 담아서 View로 전달해서
-화면에 뿌리는 형태이다.
+클라이언트의 요청이 오면 Controller에서 값을 받아서 처리하고 Model에 담아서 View로 전달해서 화면에 뿌리는 형태이다.
 
 * 지금까지 Spring을 나가기전에 스프링의 기본이 되는 Servlet/Jsp를 이용해서 예제를 진행했었다.
 JSP에 비즈니스 로직과 디자인을 한 곳에 뒤섞여 작성해 놨었다.
 
-### MVC 패턴 특징
-* 브라우저가 있고, 서버가 있을 때 서버 안에 JSP와 JavaBeans가 있는데 이런 구조가 Model 1 아키텍쳐이다. (비즈니스로직과 디자인이 하나의 파일에 합쳐진 구조)
+### Model 1 구조
+* 브라우저가 있고, 서버가 있을 때 서버 안에 JSP(View + 비즈니스 로직)와 JavaBeans(Model)가 있는데 이런 구조가 Model 1 아키텍쳐이다. (비즈니스로직과 디자인이 하나의 파일에 합쳐진 구조)
   * Model 1 아키텍쳐는 90년대 말부터 지금가지 쓰고있는 웹 아키텍쳐이다.
     * 아키텍쳐는 뼈대, 골격이라고 의미하면된다.
-* 브라우저가 `getBoard.jsp`로 어떤 요청을 했다면, JSP는 사용자의 입력 정보추출, DB연동, 응답 화면을 구성하는 역항를 하고
- 데이터를 담는 자바 객체인 DAO,VO가 JavaBeans에 해당한다. 이 자바빈즈르를 이용해서 DB에서 데이터를 가져오고 입력을 하는 것이다.
-이 JavaBeans가 모델이다.
-* JSP는 지금까지는 비즈니스로직과 디자인을 합쳐서 두 개의 역할을 하도록 하나의 파일에 작성을 했었는데
+* 브라우저가 `getBoard.jsp`로 어떤 요청을 했다면, JSP는 사용자의 입력 정보추출, DB연동, 응답 화면을 구성하는 역할을 하고
+ 데이터를 담는 자바 객체인 DAO,VO가 JavaBeans에 해당한다. 
+* 이 JavaBeans를 이용해서 DB에서 데이터를 가져오고 입력을 하는 것이다.
+
+### MVC 패턴 특징
+* JSP는 지금까지는 비즈니스로직과 디자인을 합쳐서 두 개의 역할을 하도록 하나의 파일에 작성을 했었는데(Model 1 구조) 
 이렇게 했을 때 코드양도 길어지고, 자바코드랑 디자인이 뒤섞여 있으니 수정하기도 어렵고 유지보수하기 어려워진다.
-그래서 비즈니스 로직과 디자인을 분리해서 작성하는것이 MVC 아키텍쳐이다.
-* 컨틀롤러로서 역할을 할 수 있는 새로운 서블릿을 만들고 요청이 들어오면 서블릿에서 값들을 처리해서
-Model에 담아서 View쪽으로 전달한다.
+그래서 비즈니스 로직과 디자인을 분리해서 작성하는 것이 MVC 아키텍쳐이다.
+* 컨트롤러로서 역할을 할 수 있는 새로운 서블릿을 만들고 요청이 들어오면 서블릿에서 값들을 처리해서 Model에 담아서 View쪽으로 전달한다.
   * 컨트롤러는 비즈니스 로직을 처리하는 것을 말하는데 비즈니스 로직은 다음과 같은 것들을 말한다.
     * 사용자 입력 정보 추출
     * DB 연동
     * 화면 이동 처리
-
 
 ## MVC 패턴을 적용해서 게시판 만들기 구현
 * 컨트롤러(Dispatcher Servlet)에 들어오는 값들을 처리하고, Model(DAO,VO)에 담아서 View(JSP)로 전달에서
@@ -64,27 +63,27 @@ public class DispatcherServlet extends HttpServlet {
 			
 			System.out.println("로그인 기능 처리");
 			 // 1. 사용자 입력 정보 추출
-			   String id = request.getParameter("id"); // 작성한 jsp파일은 servlet파일 안에 service안에 들어간다  service에 request 매개변수가 있으니깐 사용 가능.
-			   String password = request.getParameter("password");
+			 String id = request.getParameter("id"); // 작성한 jsp파일은 servlet파일 안에 service안에 들어간다  service에 request 매개변수가 있으니깐 사용 가능.
+			 String password = request.getParameter("password");
+			 
+			 // 2. DB 연동 처리
+			 UserVO vo = new UserVO();
+			 vo.setId(id);
+			 vo.setPassword(password);
+			 
+			 UserDAO userDAO = new UserDAO();
+			 UserVO user = userDAO.getUser(vo);
+			 
+			 // 3. 화면 네비게이션
+			 if(user != null){
 			   
-			   // 2. DB 연동 처리
-			   UserVO vo = new UserVO();
-			   vo.setId(id);
-			   vo.setPassword(password);
+			   HttpSession session = request.getSession(); // jsp은 session을 바로 쓸 수 있지만 서블릿은 바로 쓸 수 없음. 선언해줘야 함.  
+			   session.setAttribute("user", user); // 여기서 세션에 유저를 담고
 			   
-			   UserDAO userDAO = new UserDAO();
-			   UserVO user = userDAO.getUser(vo);
-			   
-			   // 3. 화면 네비게이션
-			   if(user != null){
-				   
-				   HttpSession session = request.getSession(); // jsp은 session을 바로 쓸 수 있지만 서블릿은 바로 쓸 수 없음 선언해줘야함.  
-				   session.setAttribute("user", user); // 여기서 세션에 유저를 담고
-				   
-				   response.sendRedirect("getBoardList.do"); // jsp로가면안되고 do로 가야ㅗ된다.
-			   } else{
-				   response.sendRedirect("login.html");
-			   }
+			   response.sendRedirect("getBoardList.do"); // jsp로 가면 안되고 do로 가야된다.
+			 } else{
+			   response.sendRedirect("login.html");
+			 }
 			
 		} else if (path.equals("/logout.do")) {
 			
@@ -114,41 +113,40 @@ public class DispatcherServlet extends HttpServlet {
 			boardDAO.insertBoard(vo);
 			
 			// 3. 화면 네비게이션
-			response.sendRedirect("getBoardList.do"); // 글등록을 했으면 새로운 새션을 가져와서  갱신해야한다.
+			response.sendRedirect("getBoardList.do"); // 글 등록을 했으면 새로운 새션을 가져와서 갱신해야 한다.
 			// 글 수정 삭제 입력을 하면 갱신을 목록을 해서 꺼내야 한다.
-			// 다시 로그인을해야 글목록을 다시 뿌릴 수 있다.
+			// 다시 로그인을 해야 글목록을 다시 뿌릴 수 있다.
 			
 		} else if (path.equals("/updateBoard.do")) {
 			
 			System.out.println("게시글 수정 기능 처리");
 			
-			 String seq = request.getParameter("seq");
-			 String title = request.getParameter("title");
-			 String content = request.getParameter("content");
+			String seq = request.getParameter("seq");
+			String title = request.getParameter("title");
+			String content = request.getParameter("content");
 
-			   BoardVO vo = new BoardVO();
-			   vo.setSeq(Integer.parseInt(seq));
-			   vo.setTitle(title);
-			   vo.setContent(content);
-
-			   BoardDAO boardDAO = new BoardDAO();
-			   boardDAO.updateBoard(vo);
-			   
-			   response.sendRedirect("getBoardList.do");
+			BoardVO vo = new BoardVO();
+			vo.setSeq(Integer.parseInt(seq));
+			vo.setTitle(title);
+			vo.setContent(content);
+			BoardDAO boardDAO = new BoardDAO();
+			boardDAO.updateBoard(vo);
+			
+			response.sendRedirect("getBoardList.do");
 			
 		} else if (path.equals("/deleteBoard.do")) {
 			
 			System.out.println("게시글 삭제 기능 처리");
 			
-			  String seq = request.getParameter("seq");
+			String seq = request.getParameter("seq");
 
-			   BoardVO vo = new BoardVO();
-			   vo.setSeq(Integer.parseInt(seq));
+			 BoardVO vo = new BoardVO();
+			 vo.setSeq(Integer.parseInt(seq));
 			   
-			   BoardDAO boardDAO = new BoardDAO();
-			   boardDAO.deleteBoard(vo);
+			 BoardDAO boardDAO = new BoardDAO();
+			 boardDAO.deleteBoard(vo);
 			   
-			   response.sendRedirect("getBoardList.do");
+			 response.sendRedirect("getBoardList.do");
 			
 		} else if (path.equals("/getBoard.do")) {
 			

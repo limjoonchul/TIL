@@ -638,12 +638,23 @@ public class BoardController {
 ## Layer 통합
 ![레이어연결](/Java/documents/images/Layer연결.jpg)
 
-* 총 3개의 컨테이너가 필요하다
-  * 2개의 스프링 컨테이너
-  * 1개의 서블릿 컨테이너
-* 서블릿컨테이너는 서블릿객체와 리스너 객체를 생성하고 관리한다.
-* 리스너가 생성한 첫번재 스프링컨테이너는 serviceImpl과 DAO 를 관리한다. 
- 서블릿이 생성한 두번재 컨테이너는 컨트롤을 관리한다.  
+1. 서버를 실행시키면 web.xml을 로딩해서 서블릿 컨테이너가 생성이 된다.
+2. contextloaderlistener 객체를 만든다. listener는 business-*.xml을 로딩해서 첫번째 스프링 컨테이너인 xmlwebapplicationcontext를 생성한다.
+3. 웹인 환경에서 사용할 수 있는 컨테이너이다, 웹이 아닌 환경에서 사용할 수 있는것이 generic....
+4. ServiceImpl 객체(service)와 Dao 객체(repository)가 메모리에 뜬다.
+5. 서비스 객체가 dao를 참조할 수 있도록 autowired가 되어있다. 자동으로 객체간의 관계를 설정하는 ioc로 설정되어있다.
+6. 서비스 임플에 포인트컷을 설정해 놓고 어드바이스의 서비스를 또 생성해 놓고, 이 두개를  apect  또는 advisor로 연결시켜 관리한다. 메모리에 뜬다
+여기까지가 서버를 껐다 켰을 때 이런 동작이 이루어진다.
+7. 그 다음 브라우저에서 .do라고 요청이 오면 서블릿 컨테이너가 dispatcherservlet 객체를 생성한다.(lazy)
+리스너가 먼저 메모리에 뜰 수밖에 없는 구조이다.
+8. 디스패처서블릿의 init메소드가 오버라이드 되어있고 이 메소드가 presentation-layer.xml을 로딩한다. 
+9. 그럼 두번째 스프링 컨테이너를 생성한다. (xmlwebapplicationcontext)
+10. 프레젠테이션xml을 로딩했기 때문에 컨트롤러 객체들만 메모리에 띄운다. Autowired로 컨트롤러가 서비스임플을 참조한다.
+
+* 각 컨테이너의 객체 관리
+  * 서블릿 컨테이너는 리스너 ,서블릿, 필터를 관리한다.
+  * 스프링 컨테이너 1 은 Service와 DAO, aspect를 관리한다.
+  * 스프링 컨테이너 2 는 Controller를 관리한다.
   
 ```xml
 <!-- 스프링 프레임워크에서 제공하는 ContextLoaderListener 클래스를 등록한다.(pre-loading)  -->
@@ -666,14 +677,315 @@ public class BoardController {
 레이어당 xml은 따로따로 있어야 한다.
 
 
+## 부가적인 기능
+### FileUpload
+* 파일을 업로드할 수 있는 기능을 할 수 있다.
+
+#### xml 파일 업로드 설정
+* 스프링 컨테이너는  CommonsMultipartResolver 객체를 이용하여 MultipartFile 객체를 생성한다.
+* value에 파일의 최대 size를 설정한다, size를 넘어가는 것이 들어오면 exception이 발생한다 무한대로 두고싶다면 -1를 주면 된다.
+```xml
+<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+     <property name="maxUploadSize" value="10000000"></property>
+</bean>
+```
+#### jsp 파일 설정
+*  글 등록 화면을 파일 업로드 가능한 화면으로 수정한다.
+* <form> 시작 태그에 method="post" GET 방식은 파일 업로드를 지원하지 않는다,
+그리고 enctype="multipart/form-data" 속성이 설정되어야 이 form이 업로드 기능을 지원하는 것이다.
+* 파일을 업로드하는 <tr> row를 추가해 준다. 입력되는 파라미터가 늘어서 BoardVO도 변수에 MultipartFile를 추가해야한다.
+* MultipartFile 객체는 스프링에서 지원한다, 이 객체에는 사용자가 업로드한 파일의 모든 정보(파일의 이름, 경로, 바이트 배열 등이 담겨있다.)
+  * 스프링 컨테이너는 CommonsMultipartResolver 객체를 이용하여 MultipartFile 객체를 생성한다.
+```html
+<%@ page language="java" contentType="text/html; charset=EUC-KR"
+    pageEncoding="EUC-KR"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>새글등록</title>
+</head>
+<body>
+<center>
+	<h1>새글 등록</h1>
+	<hr>
+
+		<form action="insertBoard.do" method="post" enctype="multipart/form-data">
+		<table border="1" cellpadding="0" cellspacing="0">
+			<tr>
+				<td bgcolor="orange" width="70">제목</td>
+				<td align="left"><input type="text" name="title" value="${boardVO.title}"/></td>
+			</tr>
+			<tr>
+				<td bgcolor="orange">작성자</td>
+				<td align="left"><input type="text" name="writer" size="10" value="${boardVO.writer}"/></td>
+			</tr>
+			<tr>
+				<td bgcolor="orange">내용</td>
+				<td align="left"><textarea name="content" cols="40" rows="10">${boardVO.content}</textarea></td>
+			</tr>
+			<tr>
+				<td bgcolor="orange">업로드</td><td align="left">
+				<input type="file" name="uploadFile"/></td>
+			</tr>
+			<tr>
+				<td colspan="2" align="center">
+				<input type="submit" value=" 새글 등록 "/></td>
+			</tr>
+		
+		</table>
+		</form>
+	<hr>
+</center>
+</body>
+</html>
+```
+
+#### Controller Class 설정
+* jsp파일의 입력을 받는 input의 name과 매핑되는 vo 객체의 setUploadFile에 컨테이너가 Setter Injection을 해줘서 정보를 담아서 vo객체를 생성한다.
+그래서 클라이언트가 입려한 값을 vo 객체에서 받아서 사용할 수 있다. 
+* 스프링이 메모리에 올려 놓더라도 CommonsMultipartResolver 의 id가 잘 못 되어 있으면 스프링에서 인지하지 못한다.
+ CommonsMultipartResolver 없으면 multipartfile 객체 생성이 안된다.
+* transferTo() 메소드에서 파일을 업로드하는 동작이 이루어진다. 파일을 동적으로 업로드할 수 있다.  
+```java
+@SessionAttributes("board")
+@Controller
+public class BoardController {
+	@Autowired
+	private BoardService boardService; // 이 타입의 객체가 메모리에 없으면 애러 있으면 객체의 주소를 할당한다.
+
+	// 글등록
+	@RequestMapping(value="/insertBoard.do", method=RequestMethod.POST)
+	public String insertBoard(BoardVO vo) throws Exception {
+		
+		// 파일 업로드 처리
+		MultipartFile uploadFile = vo.getUploadFile();
+		if(!uploadFile.isEmpty()) {// 파일 업로드 정보가 하나라도 있다면
+			uploadFile.transferTo(new File("C:/DEV/upload_files/" + uploadFile.getOriginalFilename())); // 파일명 문자열로 리턴		
+		}
+				
+		boardService.insertBoard(vo);
+		return "forward:getBoardList.do";
+	}
+}
+```
+
+### 예외처리 화면 설정
+* After-Throwing은 비즈니스 로직이 실행할 때 예외가 발생했을 때 적절한 예외를 하는 것이고
+지금하는 것은 화면에서의 예외처리를 한 것이다. 이 둘은 다른 것이다.
+
+#### xml파일 설정
+* SimpleMappingExceptionResolver으로 예외처리를 하는데 예외가 `java.lang.ArithmeticException`일 때 `error/arithmeticError`를 실행하는 것이다. viewresolver를 고려해서 설정해야 한다.
+* prop을 추가해서 예외에 따라 다른 화면이 보여질 수 있게 할 수 있다.
+* defultError는 따로 작성해 놨는데 우리가 알지 못하는 에러가 나왔을 때 기본 화면을 제공하기 우해서 따로 property로 놔둔 것이다.
+```xml
+<!-- 예외 화면 처리 설정  -->
+<bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+  <property name="exceptionMappings">
+     <props>
+     <!-- 에러 전용 JSP파일을 등록할 때는 ViewResolver 설정을 고려해야 한다. -->
+        <prop key="java.lang.ArithmeticException">error/arithmeticError</prop>
+        <prop key="java.lang.ArithmeticException">error/nullPointerError</prop>
+     </props>
+  </property>
+  <property name="defaultErrorView" value="error/defaultError"></property>
+</bean>
+```
+
+#### ControllerClass 설정
+* 이렇게 일부로 에러를 발생하는 코드를 설정해놨다. 여기서 에러가 나면 에러화면을 보여주는 jsp 파일로 넘어가서 그 화면이 출력된다.
+```java
+@Controller
+public class LoginController{
+	
+	@RequestMapping(value = "/login.do", method=RequestMethod.GET)
+	public String login(UserVO vo) {
+		System.out.println("로그인 기능 처리");
+		System.out.println(9/0); // error
+		vo.setId("admin");
+		vo.setPassword("admin");
+		return "login";
+
+	}
+}
+```
+
+#### error화면이 발생 했을 때 처리 화면
+* 에러가 났을 때 따로 구현한 화면을 보여질 수 있게 view를 구현해서 이 jsp파일이 렌더링될 수 있게 한다.
+```html
+<%@ page contentType="text/html; charset=euc-kr"%>
+<%@ page isErrorPage="true"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head> 
+<title>Error</title>
+</head>
+<script language="javascript">
+</script>
+<body bgcolor="#ffffff" text="#000000">
+
+<!-- 타이틀 시작 -->
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td width="93%" bgcolor="orange">문제 발생!(java.lang.ArithmeticException)</td>
+	</tr>
+</table>
+<!-- 타이틀 끝 -->
+<br>
+<table width="100%" border="1" cellspacing="0" cellpadding="0" align="center">
+	<tr>
+		<td align="center">
+			<table width="500" border="0" cellspacing="0" cellpadding="0">
+				<tr><td>Message:</td><td></td><td></td></tr>
+				<tr>
+					<td width="50">&nbsp;</td>
+					<td width="400">${exception.message}</td>
+					<td width="50">&nbsp;</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+</body>
+</html>
+```
+
+### 다국어 화면 설정
+* 각 접속하는 국가마다 다른 언어를 제공하는 기능들이 있는데 그걸 설정해보는 것이다.
+* Properties 파일에 언어별로 메세지를 작성하는 파일을 둔다.
+
+![message](/Java/documents/images/message.jpg)
+### Properties 파일 설정
+```properties
+user.login.mainTitle=LOGIN
+user.login.welcomeMsg=Member LOG-IN(english)
+user.login.id=ID
+user.login.password=PASSWORD
+user.login.loginBtn=Login GO
+user.login.langLink.ko=KOREA
+user.login.langLink.en=ENGLISH
+```
 
 
+#### xml 파일 설정
+1. MessageSource 등록: 언어별로 작성한 메세지 파일(properties)들을 메모리에 로딩한다.
+    * properties 확장자는 빈에 등록할 때 생략하고 작성한다. 마지막 . 을 기준으로 왼족은 패키지명, 오른쪽은 파일명이 된다.
+    * 컴포넌트 하나당 따로따로 메세지 파일을 하나씩 만들어야한다.
+      * 근데 만약 컴포넌트 하나당 여러개의 언어들을 지원한다고하면 각 언어별로 properties 파일을 만들어야 하니깐
+      너무 많은 파일이 생성되고 언어를 삭제하고 추가할 때마다 파일을 삭제 추가해야하기 때문에 properteis 확장자는 뺀다.
+      * 하나만 등록해 놓으면 메세지 소스에 관한 모든 파일을 `ResourceBundleMessageSource`이  알아서 등록한다.
+```xml
+
+<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+    <property name="basenames">
+         <list>
+            <value>message.messageSource</value>
+         </list>
+    </property>
+</bean>
+```
+
+2. LocaleResolver 등록: 브라우저가 전송해준 Locale을 지속적으로 유지해주는 객체
+* 아래 3가지 클래스를 기억해야 한다. 
+   * AcceptHeaderLocaleResolver: 요청할 때마다 브라우저의 Locale을 체크해서 언어를 자동으로 변경한다.(엄청 느리다)
+   자동으로 언어가 바뀐데 느리다.
+   * SessionLocaleResolver : 한번 전송된 Locale을 세션에 등록하고 세션이 종료될 때까지 지속적으로 유지한다. 주로 이걸 사용한다.
+   * FiexedLocaleResolver : 특정 언어로 고정해버리겠다. 언어를 중간에 바꾸어야해서 거의 사용하지 않는다.
+
+```xml
+<bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver"></bean>
+```
+
+3. LocaleChangeInterceptor 등록 : 중간에 언어를 변경하는 객체 
+```xml
+<mvc:interceptors>
+   <bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+      <property name="paramName" value="lang"></property>
+   </bean>
+</mvc:interceptors>
+```
+
+#### jsp 파일 설정
+* <%@taglib uri="http://www.springframework.org/tags" prefix="spring"%> 이걸 추가 해 줘야 한다.
+* 언어가 바뀌는 부분에 <spring:message code="user.login.welcomeMsg"/>처럼 작성하는데 
+code = "" 부분은 Prperties에 작성한 key값을 넣어주면 된다.
+```html
+<%@ page language="java" contentType="text/html; charset=EUC-KR"
+    pageEncoding="EUC-KR"%>
+<%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+    <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
+<title><spring:message code="user.login.mainTitle"/></title>
+</head>
+<body>
+<center>
+<h1><spring:message code="user.login.welcomeMsg"/></h1>
+<a href="login.do?lang=ko"><spring:message code="user.login.langLink.ko"/></a>&nbsp;&nbsp;&nbsp;
+<a href="login.do?lang=en"><spring:message code="user.login.langLink.en"/></a>
+<hr>
+<form action="login.do" method="post">
+<table border="1" cellpadding="0" cellspacing="0" width="200">
+<tr>
+  <td bgcolor="orange"><spring:message code="user.login.id"/></td>
+  <td><input type="text" name="id" size ="10" value="${userVO.id}"></td>
+</tr>
+<tr>
+  <td bgcolor="orange"><spring:message code="user.login.password"/></td>
+  <td><input type="password" name="password" size ="10" value="${userVO.password}"></td>
+</tr>
+<tr>
+  <td colspan="2" align="center"><input type="submit" size ="20" value="<spring:message code="user.login.loginBtn"/>"></td>
+</tr>
+</table>
+</form>
+</center>
+</body>
+</html>
+```
+
+### 데이터 변환 설정
+* XML은 텍스트형태의 파일이기때문에 텍스트를 지원하지 않은 플랫폼은 존재하지 않는다
+텍스트를 처리 못 하는 프로그램도 존재 하지 않는다.
+* 그래서 텍스트형태의 XML로 데이터를 보내고받으면 개발언어에 상관없이데이터를 처리할 수 있었다. 근데 XML은 사이즈가 너무 크다.
+시작태그와 종료태그로 감싸야하기 때문에 무겁다.
+* 경량화된 데이터포맷 JSON으로 하는 것이다. `"age":30` 이 형식의 데이터
+* 예전에는 3개의 클래스를 빈등록했어야 하는데  요샌 `<mvc:annotation-driven/>`이 설정 하나만 해 놓으면
+검색결과인 VO객체를 JSON포맷 데이터로 변환해준다.
 
 
+```xml
+<!-- 데이터 변환 설정 : 검색 결과(VO 객체)를 JSON형태의 데이터로 변환한다.-->
+<mvc:annotation-driven/>
+```
 
+* JSON으로 변환된 값들을 화면에 보이지 않게 할려고 하면
+`@JsonIgnore`을 검색결과인  VO 객체의 getXXX()에 붙이면 된다.
+```java
+@Data
+public class BoardVO {
+	// 테이블의 컬럼 이름(데이터 타입까지)과 동일한 멤버변수를 private로 선언한다.
+	private int seq;
+	private String title;
+	private String writer;
+	private String content;
+	private Date regDate;
+	private int cnt;
+	private String searchCondition;
+	private String searchKeyword;
+	
+	@JsonIgnore
+	public String getSearchCondition() {
+		return searchCondition;
+	}
+	@JsonIgnore
+	public String getSearchKeyword() {
+		return searchKeyword;
+	}
 
-
-
-
-
+	@JsonIgnore
+	public MultipartFile getUploadFile() {
+		return uploadFile;
+	}
+}
 ```

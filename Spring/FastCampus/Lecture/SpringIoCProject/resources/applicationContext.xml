@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	
+	
+<!-- 	<bean id="tv" class="pholymorphism4.LGTv">
+	      <constructor-arg  ref="speaker"></constructor-arg>
+	      <constructor-arg value="13000"></constructor-arg>
+	</bean>
+	<bean id="speaker" class="pholymorphism4.AppleSpeaker"></bean> -->
+	<!-- 참조되는 값만 가져오는 것이라서 bean등록 순서가 바뀌어도 상관없음 -->
+	<!-- 그런데 메모리에 먼저 올라가는건 speaker가 먼저 올라간다 엘지티비를 생성하여 참조할 때 소니스피커가 필요하니깐  먼저 생성되도록 되어있는건가? -->
+	
+<!-- 	<bean id="speaker" class="pholymorphism4.SonySpeaker"></bean>
+	<bean id="tv" class="pholymorphism4.LGTv">
+	      <property name="speaker" ref="speaker"></property>
+	      <property name="price" value="12222"></property>
+	</bean> -->
+	<!-- property의 name= "XXX"는 LGTv 클래스에 있는 setXXX 메소드의이름과 매핑된 것을 찾아가는 것 같다.
+	setSpeaker의 매개변수로 들어가는 값을 매핑하는 줄알았는데 setSpeaker 자체를 매핑해준다.  -->
+	
+	<context:component-scan base-package="pholymorphism4"></context:component-scan>
+	<!-- 컴포넌트 스캔을 썼을때  pholymorphism4 패키지의 클래스 명순서대로 구성되어있는데 이 순서대로 메모리에 로딩된다. -->
+</beans>
+
+
+
+
+
+
+
+
+
+
+

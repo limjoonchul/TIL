@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	
+	<!-- 모든 컨트롤러 클래스들을 bean 등록한다. -->
+<!-- 	<bean id="login" class="com.rubypaper.web.controller.user.LoginController"></bean>
+	<bean id="logout" class="com.rubypaper.web.controller.user.LogoutController"></bean>
+	<bean id="getBoardList" class="com.rubypaper.web.controller.board.GetBoardListController"></bean>
+	<bean id="getBoard" class="com.rubypaper.web.controller.board.GetBoardController"></bean>
+	<bean id="insertBoard" class="com.rubypaper.web.controller.board.InsertBoardController"></bean>
+	<bean id="updateBoard" class="com.rubypaper.web.controller.board.UpdateBoardController"></bean>
+	<bean id="deleteBoard" class="com.rubypaper.web.controller.board.DeleteBoardController"></bean> -->
+	
+	<!-- 클라이언트의 요청을 어떤 컨트롤러가 처리할 지 HandlerMapping으로 매핑한다.  -->
+<!-- 	<bean id="handlerMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+	   <property name="mappings">
+	      <props>
+	          <prop key="/login.do">login</prop>
+	          <prop key="/logout.do">logout</prop>
+	          <prop key="/getBoardList.do">getBoardList</prop>
+	          <prop key="/getBoard.do">getBoard</prop>
+	          <prop key="/insertBoard.do">insertBoard</prop>
+	          <prop key="/updateBoard.do">updateBoard</prop>
+	          <prop key="/deleteBoard.do">deleteBoard</prop>        	          
+	      </props>
+	   </property>
+	  
+	</bean> -->
+	<!-- 아이디를 변수명 처럼 작성하면 되지만... 이 클래스는 id가 고정되어있다  handlerMapping 이걸로 해줘야한다 꼭 꼭 생각해야함  -->
+	<!-- properties객체를 는 props로 넣어주면 된다.  -->
+	
+	
+	
+	<!-- ViewResolver를 등록한다.  -->
+	<!-- 브라우저는 절대 서버가 관리하는 프로젝트의 WEB-INF폴더에 접근할 수 없다. 따라서 브라우저가 직접 접근해서는 안되는 파일은  WEB-IN폴더에 은닉한다. -->
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+	     <property name="prefix" value="/WEB-INF/board/"></property>
+	     <property name="suffix" value=".jsp"></property>
+	</bean>
+	
+	<context:component-scan base-package="com.rubypaper.web"></context:component-scan>
+	     
+	 <!-- 파일 업로드 설정
+	 스프링 컨테이너는  CommonsMultipartResolver 객체를 이용하여 MultipartFile 객체를 생성한다.
+	 -->
+	 <!-- size를 넘어가는 것이 들어오면 exception이 발생한다 무한대로 두고싶다면 -1를 주면 된다.  -->
+	 <bean id="multipartResolver" 
+	      class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="10000000"/>
+	</bean>
+	 
+	 <!-- 예외 화면 처리 설정  -->
+	 <!-- 심플매핑익섹션으로 예외처리를하는데 예외가 java.lang.ArithmeticException일 때  error/arithmeticError를 실행하는 것이다. viewresolver를 고려해서 설정해야 한다.-->
+	 <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+	   <property name="exceptionMappings">
+	      <props>
+	      <!-- 에러 전용 JSP파일을 등록할 때는 ViewResolver 설정을 고려해야 한다. -->
+	         <prop key="java.lang.ArithmeticException">error/arithmeticError</prop>
+	         <prop key="java.lang.ArithmeticException">error/nullPointerError</prop>
+	      </props>
+	   </property>
+	   <property name="defaultErrorView" value="error/defaultError"></property>
+	 </bean>
+	 
+	 
+	 <!-- 다국어 처리 설정  -->
+	 <!-- 1.MessageSource 등록: 언어별로 작성한 메세지 파일(properties)들을 메모리에 로딩한다.  -->
+	 <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+	     <property name="basenames">
+	          <list>
+	             <value>message.messageSource</value>
+	          </list>
+	     </property>
+	 </bean>
+	 <!-- 2.LocaleResolver 등록: 브라우저가 전송해준 Locale을 지속적으로 유지해주는 객체
+	 아래 3가지 클래스를 기억해야 한다. 
+	 AcceptHeaderLocaleResolver: 요청할 때마다 브라우저의 Locale을 체크해서 언어를 자동으로 변경한다.(엄청 느리다)
+	 자동으로 언어가 바뀐데 느리다.
+	 SessionLocaleResolver     : 한번 전송된 Locale을 세션에 등록하고 세션이 종료될 때까지 지속적으로 유지한다. 주로 이걸 사용한다.
+	 
+	 FiexedLocaleResolver      : 특정 언어로 고정해버리겠다. 언어를 중간에 바꾸어야해서 거의 사용하지 않음.
+	 
+	 -->
+	 <bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
+	 </bean>
+	 
+	 <!-- 3. LocaleChangeInterceptor 등록:  중간에 언어를 변경하는 객체  -->
+	 <mvc:interceptors>
+	    <bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+	       <property name="paramName" value="lang"></property>
+	    </bean>
+	 </mvc:interceptors>
+	 
+	 <!-- 데이터 변환 설정 : 검색 결과(VO 객체)를  JSON형태의 데이터로 변환한다.-->
+	 <mvc:annotation-driven/>
+
+
+</beans>

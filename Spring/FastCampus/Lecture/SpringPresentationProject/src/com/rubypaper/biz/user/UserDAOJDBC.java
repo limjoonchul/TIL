@@ -1,0 +1,78 @@
+package com.rubypaper.biz.user;
+
+
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import com.rubypaper.biz.common.JDBCUtil;
+
+// DAO(Data Access Object) 클래스
+//@Repository
+public class UserDAOJDBC implements UserDAO{
+	// JDBC 관련 변수 선언
+
+	private Connection conn;
+	private PreparedStatement stmt;
+	private ResultSet rs;
+	
+	// USERS 테이블 관련 SQL 명령어
+	private static final String USER_INSERT = "INSERT INTO USERS VALUES(?, ?, ?, ?)";
+	private static final String USER_GET = "SELECT * FROM USERS WHERE ID=? AND PASSWORD=?";
+	
+	
+	// USERS 테이블 관련 CRUD 기능의 메소드
+	// 회원 등록
+	public void insertUser(UserVO vo) {
+		System.out.println("===> JDBC 기반 insertUser메소드 처리");
+		try {
+			conn = JDBCUtil.getConnection();
+			stmt = conn.prepareStatement(USER_INSERT); // sql이 완성되지 않았다 ?로 넣었기 때문에.
+			
+			stmt.setString(1, vo.getId()); // sql 세팅 값을 넣어줌.
+			stmt.setString(2, vo.getPassword());
+			stmt.setString(3, vo.getName());
+			stmt.setString(4, vo.getRole());
+			
+			stmt.executeUpdate();
+		}catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			JDBCUtil.close(stmt, conn);
+		}
+	}
+
+	// 회원 상세 조회
+	public UserVO getUser(UserVO vo) {
+		System.out.println("===> JDBC 기반 getUser메소드 처리");
+		UserVO user = null;
+		try {
+			conn = JDBCUtil.getConnection();
+			stmt = conn.prepareStatement(USER_GET);
+			
+			stmt.setString(1, vo.getId());
+			stmt.setString(2, vo.getPassword());
+			
+			rs= stmt.executeQuery();
+			
+			if (rs.next()) {
+//				System.out.println(rs.getInt("SEQ") + "번 게시글 내용 : " + rs.getString("CONTENT"));
+				
+				// 검색 결과 한건을 BoardVO 객체를 매핑한다.
+				user = new UserVO();
+				user.setId(rs.getString("ID"));
+				user.setPassword(rs.getString("PASSWORD"));
+				user.setName(rs.getString("NAME"));
+				user.setRole(rs.getString("ROLE"));
+				
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			JDBCUtil.close(rs, stmt, conn);
+		}
+		return user;
+	}
+
+}

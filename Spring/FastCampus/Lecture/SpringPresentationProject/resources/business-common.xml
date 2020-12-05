@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+	<!-- 	<bean id="boardDAO" class="com.rubypaper.biz.board.BoardDAO"></bean>
+	<bean id="boardService" class="com.rubypaper.biz.board.BoardServiceImpl">
+	       <property name="boardDAO", ref="boardDAO"></property>
+	      
+	</bean> -->
+	<!-- impl클래스의 setBoardDAO에 BoardDAO를 넣어준다는 의미이다. -->
+	
+	
+	<!-- <bean  class=" com.rubypaper.biz.board.BoardDAO"></bean> -->
+	
+	<!-- 횡단 관심에 해당하는 동통 클래스를 bean 등록한다. -->
+<!-- 	<bean id="log" class="com.rubypaper.biz.common.LogAdvice"></bean>
+	<bean id="afterReturning" class="com.rubypaper.biz.common.AfterReturningAdvice"></bean>
+	<bean id="afterThrowing" class="com.rubypaper.biz.common.AfterThrowingAdvice"></bean> -->
+	
+	<!-- AOP 설정 -->
+	<!-- <aop:config>
+	    <aop:pointcut id="allPointcut" expression="execution(* com.rubypaper.biz..*Impl.*(..))" />
+	    <aop:pointcut id="getPointcut" expression="execution(* com.rubypaper.biz..*Impl.get*(..))" />
+	    
+	    <aop:aspect ref="log">
+	       <aop:before pointcut-ref="allPointcut" method="printLog"/>
+	    </aop:aspect>
+	  
+	    <aop:aspect ref="afterReturning">
+	       <aop:after-returning pointcut-ref="getPointcut" method="afterLog" returning="returnObj"/>
+	    </aop:aspect>
+	    
+	    <aop:aspect ref="afterThrowing">
+	       <aop:after-throwing pointcut-ref="allPointcut" method="exceptionLog" throwing="exceptionObj"/>
+	    </aop:aspect>
+	    
+	    <aop:aspect ref="around">
+	        <aop:around pointcut-ref="allPointcut" method="aroundLog"></aop:around>
+	    </aop:aspect>
+	</aop:config> -->
+	
+	<!-- void 리턴타입이 void인 메소드에서만 사전처리가 동작해라 !void는 void가 아닌것에도 동작 , *-리턴타입이 뭐든 상관이 없이 사전처리 동작  이것이 포인트 컷
+	내가원하는 메소드에서만 기능이 동작하도록 하기 위해서다.
+	execution()은 명시자라고 부른다. () 안에 있는것이 포인트컷 표현식 이라고 부르는 것이 중요하다
+	이걸 어떻게 설정하는지에 따라 필터링 결과가 달라진다.-->
+	
+	<!-- after는 returning속성을 쓸 수 없다. 비즈니스로직을 받아들이는 것 
+	이 속성을 사용할 수 있는것은 after-returning이다. 
+	비즈니스로직을 실행후에 뭔가를 리턴한 후에  어드바이스가 가지고 있는 메소드를 실행해라. 그때 비즈니스로직이 반환한 값을 returnObj에 담아서 반환해라라는 의미이다.
+	object타입인 이유는 반환값이 어느것일지 모르기때문에 다 받을수있는 오브젝트로 반환한다.
+	
+	비즈니스로직을 건드리지 않고 사후처리메소드를 만들어서 사후처리메소드에서 리턴값을 받아서 db에 백업할 수 있는 작업도 가능하다 중요한건 비즈니스로직을 건드리지 않고... 
+	returning은 어드바이저 객체의 매개변수와 맞춰워야하니간 그 매개변수값을 복사해서 넣어주는게 가장 안전하다.-->
+	
+	<!-- after-throwing 비즈니스로직의 객체가 예외가 발생하면 어드바이저의 메소드를 실행하고, 어드바이저의 메소드에  exceptionObj에 발생한 예외를 담아서 넘겨줘라 -->
+	
+	<!-- 컴포넌트 스캔 설정 -->
+	<context:component-scan base-package="com.rubypaper.biz"></context:component-scan>
+	
+     <!-- DAO는 실제로 사용할 클래스 하나만 등록한다. -->
+	<bean class="com.rubypaper.biz.board.BoardDAOMyBaTis"></bean>
+	<bean class="com.rubypaper.biz.user.UserDAOMyBaTis"></bean>
+    
+	<!-- Annotation 기반의 AOP 설정 -->
+	<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
+	
+    
+    <!-- Spring JDBC 설정 -->
+    <bean class="org.springframework.jdbc.core.JdbcTemplate">
+       <property name="dataSource" ref="dataSource"></property>
+    </bean>
+	
+    
+</beans>
+
+
+
+
+
+
+
+
+
+
+

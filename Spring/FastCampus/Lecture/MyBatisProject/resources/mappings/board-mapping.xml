@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--id들을 네임스페이스에 등록한다는 의미이다 이 네임스페이스가 있어야 유니크한 id를 만들 수 있다  -->
+<!-- com.rubypaper.biz.board.BoardVO  -->
+<mapper namespace="BoardDAO"> 
+
+<!-- 리절트타입을 board로 해놓으면 안써도 되는데 쓰는 이유는
+1. 컬럼이름에 _가 있는데 변수이름과 컬럼이름이 완벽히 매핑이 안될 때 사용한다. 
+2. select를 날렸는데 select가 알리아스가 적용이 되버리면 내가 지정한 알리아스가 컬럼으로 나오는데 이런걸 이용하기 위해서
+출력 결과를 원하는 컬럼명으로 바꿔서 출력하기 위해서 -->
+
+
+<resultMap type="board" id="boardResult">
+  <id property="seq" column="SEQ"></id>
+  <result property="title" column="TITLE"></result>
+  <result property="writer" column="WRITER"></result>
+  <result property="content" column="CONTENT"></result>
+  <result property="regDate" column="REGDATE"></result>
+  <result property="cnt" column="CNT"></result>
+</resultMap>
+
+
+<insert id="insertBoard" parameterType="board"> 
+  INSERT INTO BOARD(SEQ, TITLE, WRITER, CONTENT) 
+  VALUES((SELECT NVL(MAX(SEQ),0)  + 1 FROM BOARD), #{title}, #{writer}, #{content})
+</insert>
+
+<insert id="insertBoardMap" parameterType="java.util.Map"> 
+  INSERT INTO BOARD(SEQ, TITLE, WRITER, CONTENT) 
+  VALUES((SELECT NVL(MAX(SEQ),0)  + 1 FROM BOARD), #{title}, #{writer}, #{content})
+</insert>
+
+
+<update id="updateBoard" parameterType="board">
+UPDATE BOARD
+ SET TITLE=#{title}, WRITER=#{writer}, CONTENT=#{content} 
+ WHERE SEQ=#{seq}
+</update>
+
+<delete id="deleteBoard" parameterType="board">
+DELETE BOARD 
+WHERE SEQ=#{seq}
+</delete>
+
+<select id="getBoard" parameterType="board" resultType="board">
+<!--where절에 '<'를 사용할 수없음 왜냐하면 태그로 인식하기 때문에 그래서 &lt; 가 <랑 같은의미에서 이걸 넣어서 비교연산을 실행해야한다
+그런데 가독성이 떨어짐 -->
+<!-- 그래서  C DATA 섹션에서 [] 안에 SQL을 집어넣으면 <, > 를 쓸 수 있다.  []안을 문자영역으로 인식한다.그래서 파싱하지 않도록 인식한다. 그대로 DB에 넣는다.
+프로젝트할 때 기억해야한다!!-->
+<![CDATA[
+  SELECT * FROM BOARD
+ WHERE SEQ <= #{seq}
+]]>
+</select>
+
+<!-- 실행결과를 리절트셋을 이용해서 실행해라  -->
+<select id="getBoardList" resultMap="boardResult">
+SELECT * FROM BOARD  
+ORDER BY SEQ DESC
+</select>
+
+
+<select id="getBoardListMap" resultType="java.util.Map">
+SELECT *
+FROM BOARD  
+ORDER BY SEQ DESC
+</select>
+
+
+<!-- 기본형으로 반환  -->
+<select id="getTotalCount" resultType="int">
+
+<![CDATA[
+  SELECT count(*) FROM BOARD
+]]>
+</select>
+
+</mapper>

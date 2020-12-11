@@ -242,6 +242,104 @@ public void testQueryAnnotationTest1() {
 	}
 }
 ```
+### 연관관계 매핑 - JPA에서 엔티티 객체를 통해서 테이블을 만든다는 기본 전제를 알고 있어야 한다.
+* 관계형 데이터베이스에서는 관련된 데이터를 여러 테이블에 나누어 저장하고 조인을 통해 조회한다.
+* 엔티티 역시 다른 엔티티와 관계를 맺고 있으며, 참조 변수를 통해 연관된 데이터를 조회할 수 있다.
+* 즉 테이블의 관계와 객체의 관계는 정확하게 일치하지 않는데 이를 패러다임의 불일치라고 한다.
+  * 테이블은 Foreign key를 통해서 연결하고, 객체는 참조 변수를 이용해서 연결한다 
+  그래서 관계가 일치하지 않는다고 표현한 것이다.
 
+#### 단방향 연관관계 설정
+* 엔티티는 참조를 통해서 관계를 맺고, 테이블은 Foreign key를 통해서 관계를 맺는다.
+* 연관관계 매핑 고려사항
+   * 방향 - 단방향과 양뱡항이 있는데, 방향은 객체에만 적용이 된다. 참조변수가 있는 쪽에서 반대쪽의 객체를 참조하는 것이 방향이다. 
+   테이블은 Foregin key로 연결하면 조인을 통해서 하나의 테이블이 되는거니깐 결국 각각의 테이블에서 서로 조회를 할 수 있다
+   * 다중성 - 다 대 일(N:1), 일 대 다(1:N), 일 대 일(1:1), 다 대 다(N:M)이 있다.
+   * 연관관계 주인 - 객체를 양방향 연관관계로 매핑하려면 연관관계의 주인을 정해야 한다.
+   일반적으로 연관관계의 주인은 다(N)쪽이 된다.
+   테이블은 원래 양방향이니깐 상관없지만, 객체를 양뱡향으로 만들려할 때 한쪽을 주인으로 정해야 한다.
+
+![연관관계](/Java/documents/images/객체와테이블의연관관계.jpg)
+
+#### 다대일 단방향 매핑
+* @ManyToOne
+   * Optional - 연관 엔티티가 반드시 설정되어있어야 하는지를 나타내는 것이다.
+   true - Null을 허용하겠다는 의미이고, false - 다른 객체를 참조하고 있어야 한다.
+   * Fetch - 패치 전략을 설정한다. eager는 즉시 조회, lazy는 늦은 조회 라는 의미에서 사용되는데,
+   ManyToOne에서 Many쪽에서 패치전략을 설정할 때 연관된 객체가 하나밖에 없으니 EAGER가 기본으로 설정되어 있고,
+   OneToMany에서는 One에 연관된 객체가 여러개가 있어서 바로 조회하기 보다는 실제로 사용할 때 참조하는 객체를 가져오는 것으로
+   Lazy가 기본 값이다.
+   * Cascade - 영속성 전이 기능을 설정한다. 연관 엔티티를 같이 저장하거나 삭제할 때 사용한다.
+   
+* @JoinColumn
+   * name 속성을 통해 참조하는 테이블의 외래 키 컬럼을 매핑한다.
+* 내부조인으로 변경하기
+   * 다대일 매핑을 처리할 때, 외부 조인 보다 내부 조인이 성능이 좋다.
+   * 반드시 참조 키에 값이 설정되는 상황이면 외부조인을 내부조인으로 변경하는 것이 좋다.   
+```java
+@Getter
+@Setter
+@ToString(exclude="member") // 이렇게 해야 양방향 조회할 때 toString에서 참조변수를 계속 참조하는 무한루프가 안생긴다.
+@Entity
+public class Board {
+	@Id
+	@GeneratedValue
+	private Long seq;
+	private String title;
+//	private String writer;
+	private String content;
+	@Temporal(value = TemporalType.TIMESTAMP)
+	private Date createDate;
+	private Long cnt;
+
+	@ManyToOne(fetch= FetchType.EAGER) // fetch= FetchType.Eager// 여러개의 게시글이 하나의 회원과 매핑될 수 있다.
+	@JoinColumn(name="MEMBER_ID", nullable = false) // FK로 사용할 컬럼을 지정한다.
+	private Member member; // 회원 객체를 참조하기 위함
+}
+```
+
+#### 양방향 연관관계 설정
+* 객체는 양방향으로 매핑하려면 각각의 객체가 서로 참조변수를 가지고 있어야 한다.
+* mappedBy
+   * mappedBy는 양방향 연관관계에서 연관관계의 주인과 관련된 속성이다.
+   * 객체는 서로를 참조하는 단방향 관계 두 개가 필요하지만 테이블은 외래키 하나로 양방 조회가 가능하다.
+   * 엔티티를 양방향으로 매핑하려면 매핑에 참여하는 참조변수가 두개인데 외래키는 하나이기 때문에 둘 사이에 차이가 발생한다.
+   * 보통 연관관계 주인은 테이블에 외래 키가 있는 엔티티로 지정한다.
+   그리고 연관관계 `주인이 아닌 쪽에 mapppedBy`를 작성하여 주인이 아님을 설정한다.
+
+![양뱡향연관관계](/Java/documents/images/양뱡향객체연관관계.jpg)
+
+```groovy
+@Entity
+@Data
+public class Member {
+	@Id
+	@Column(name = "MEMBER_ID") // 참조되는 컬럼을 설정
+	private String id;
+	private String password;
+	private String name;
+	private String role;
+	
+	@OneToMany(mappedBy="member", fetch=FetchType.EAGER)
+	private List<Board> boardList = new ArrayList<Board>();
+}
+```
+
+* 양뱡향 매핑시 주의 사항
+  * lombok의 @ToString으로 순환 참조에 빠질 수 있는데 이때, @ToString어노테이션을 따로 써줘야 하는데
+  `@ToString(exclude="member")` 이렇게 작성하면 된다.
+  ![양방향매핑주의사항](/Java/documents/images/양방향매핑주의.jpg)
+  
+#### 영속성 전이
+* 특정 엔티티를 영속 상태로 만들거나 삭제 상태로 만들 때 연관된 엔티티도 같이 처리할 경우 영속성 전이를 사용한다.
+```java
+// mappedBy는 양방향 매핑에서 연관관계의 주인이 아닌 쪽 변수에 선언한다. 속성 값은 연관관계 주인 변수 이름이다.
+	@OneToMany(mappedBy="member", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private List<Board> boardList = new ArrayList<Board>();
+```
+* 예를들어서 Member 객체와 Board객체가 있을 때 Board에서 Member의 id를 외래키로 가지고 있을 때,
+Member객체를 삭제할려고 하면 Board객체의 Member의 id를 참조하고 있는 ROW를 제거하고
+Member객체를 삭제해야 한다. 이런걸 한번에 처리할 수 있게 속성을 정의하는 것이다.
+ 
 
 

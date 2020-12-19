@@ -261,7 +261,7 @@ public class InsertBoardServlet extends HttpServlet {
 ```
 
 ### Servlet Filter
-* Filter는 서버가 뜰 때 바로 메모리에 로딩되서 FreeLoading, 서블릿은 요청이 있을 때 메모리에 로딩되서 Lazy-Loding이다.
+* Filter는 서버가 뜰 때 바로 메모리에 로딩되서 Pre-Loading, 서블릿은 요청이 있을 때 메모리에 로딩되서 Lazy-Loding이다.
 * 필터는 클라이언트의 Request가 Servlet에 도달하기 전에 요청 데이터를 원하는 형태로 조작하는 사전처리,
 혹은 Servlet에서 나온 응답 데이터를 조작하여 사후처리 목적으로 사용된다.
 * 필터는 기능당 하나씩 만든다 (예로, 시간을 체크하는 TimeCheckFilter, 인코딩 설정하는 EncodingFilter 등)
@@ -390,8 +390,8 @@ public class CharacterEncodingFilter implements Filter {
 ```
 
 #### 서블릿의 로딩시점을 변경 가능
-* 필터는 Free-Loading이라 바로 메모리에 올라가지만 서블릿은 Lazy-Loding이여서 요청이 올 때 메모리에 로딩이 되는데
-이걸 web.xml에 설정을 해서 Free-Loding처럼 바로 메모리에 올라가도록 변경이 가능하다.
+* 필터는 Pre-Loading이라 바로 메모리에 올라가지만 서블릿은 Lazy-Loding이여서 요청이 올 때 메모리에 로딩이 되는데
+이걸 web.xml에 설정을 해서 Pre-Loding처럼 바로 메모리에 올라가도록 변경이 가능하다.
 * 해당 서블릿에 `<load-on-startup>숫자</load-on-startup>` 이걸 작성해주면 되는데 숫자가 작을 수록 우선 순위가 더 높다.
 ```xml
 <servlet>

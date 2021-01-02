@@ -1,5 +1,5 @@
 # SkillCheck Level 1
-![Level1통과이미지](../../Java/documents/images/스킬체크1.png)
+![Level1통과이미지](../../../Java/documents/images/스킬체크1.png)
 
 ## [평균 구하기](https://programmers.co.kr/learn/courses/30/lessons/12944)
 

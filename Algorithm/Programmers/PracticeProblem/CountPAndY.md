@@ -1,4 +1,4 @@
-# 프로그래머스 - [문자열 내 p와 y의 개수](https://programmers.co.kr/learn/courses/30/lessons/12916)
+# [문자열 내 p와 y의 개수](https://programmers.co.kr/learn/courses/30/lessons/12916)
 
 ## 문제 설명
 * 대문자와 소문자가 섞여있는 문자열 s가 주어집니다. s에 'p'의 개수와 'y'의 개수를 비교해 같으면 True, 

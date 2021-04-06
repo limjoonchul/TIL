@@ -1,4 +1,4 @@
-# Alogorithm - [전화번호목록](https://programmers.co.kr/learn/courses/30/lessons/42577)
+# [전화번호목록](https://programmers.co.kr/learn/courses/30/lessons/42577)
 
 ## 문제 설명
 * 전화번호부에 적힌 전화번호 중, 한 번호가 다른 번호의 접두어인 경우가 있는지 확인하려 합니다.

@@ -30,3 +30,42 @@
     - 분할 정복
         - 부분 문제는 서로 중복되지 않는다.
         - Memorization 기법 사용 안함.
+   
+## DP 예제
+```java
+package codinganddatastructure.dynamicprogramming;
+
+import java.util.Arrays;
+
+public class FibonacciTest {
+    /**
+     * 재귀함수를 이용해서 피보나치를 계산하면
+     * 계속 내려가면서 하위의 값을 쌓고쌓고 해서 시간이 오래걸릴 수 있다.
+     */
+    public static int fibonacci(int num) {
+        if (num < 2) {
+            return num;
+        }
+
+        return fibonacci(num - 1) + fibonacci(num - 2);
+    }
+
+    // 재귀함수보다 속도가 빠르다 동일한 것에 대해서 다시 계산할 필요가 없고 저장해놓기 때문에
+    public static int dp(int num) {
+        // 입력받은 값까지 인덱스로 지정해놨기 때문에 길이는 입력받은 값 + 1 이다.
+        int[] cache = new int[num + 1];
+        Arrays.fill(cache, 0);
+        cache[1] = 1;
+
+        for (int i = 2; i < cache.length; i++) {
+            cache[i] = cache[i - 1] + cache[i - 2];
+        }
+        return cache[num];
+    }
+    public static void main(String[] args) {
+        System.out.println(fibonacci(5));
+        System.out.println(dp(10));
+    }
+}
+
+```
